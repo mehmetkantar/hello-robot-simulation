@@ -1,0 +1,35 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100
+    
+    lift_controller:
+      type: effort_controllers/JointGroupEffortController
+
+    arm_controller:
+      type: effort_controllers/JointGroupEffortController
+
+    gripper_controller:
+      type: effort_controllers/JointGroupEffortController
+
+    head_controller:
+      type: effort_controllers/JointGroupEffortController
+
+lift_controller:
+  ros__parameters:
+    joints:
+      - joint_lift
+
+arm_controller:
+  ros__parameters:
+    joints:
+      - joint_arm
+
+gripper_controller:
+  ros__parameters:
+    joints:
+      - joint_gripper
+
+head_controller:
+  ros__parameters:
+    joints:
+      - joint_head

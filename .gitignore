@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+
+# ROS
+/stretch_ws/build/
+/stretch_ws/install/
+/stretch_ws/log/
+/stretch_ws/src/stretch_ros2/
+/stretch_ws/src/stretch_moveit_config/
+/stretch_ws/src/stretch_urdf_official/
+
+# Other
+.deps_installed
+*.swp
+*~
