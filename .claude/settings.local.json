@@ -39,7 +39,18 @@
       "Bash(./complete_stretch_gazebo.sh:*)",
       "Bash(ros2 topic list:*)",
       "Bash(ros2 topic pub:*)",
-      "Bash(ros2 topic echo:*)"
+      "Bash(ros2 topic echo:*)",
+      "Bash(./launch_obstacle_world.sh:*)",
+      "Bash(touch:*)",
+      "Bash(./launch_multi_world.sh:*)",
+      "Bash(./test_stable_gazebo.sh:*)",
+      "Bash(./test_robot_spawn.sh:*)",
+      "Bash(./test_pick_place_setup.sh:*)",
+      "Bash(xacro:*)",
+      "Bash(./debug_robot_visibility.sh:*)",
+      "Bash(pgrep:*)",
+      "Bash(ros2 service call:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }
