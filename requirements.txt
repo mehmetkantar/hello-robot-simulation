@@ -1,0 +1,23 @@
+# Hello Robot Stretch Dual GUI Simulation Requirements
+
+# Core GUI and Image Processing
+tkinter  # Usually included with Python, but listed for completeness
+Pillow>=9.0.0  # PIL for image processing
+opencv-python>=4.5.0  # OpenCV for image manipulation
+numpy>=1.21.0  # NumPy for array operations
+
+# Optional but recommended for better performance
+opencv-contrib-python>=4.5.0  # Additional OpenCV features
+
+# Note: stretch_mujoco is required but should be installed separately
+# following the official Hello Robot installation guide as it has
+# specific system dependencies and configuration requirements.
+
+# The following packages are typically included with stretch_mujoco:
+# - mujoco
+# - mujoco-python-viewer
+# - stretch_mujoco (main package)
+
+# For development and debugging (optional):
+# matplotlib>=3.5.0  # For data visualization if needed
+# jupyter>=1.0.0     # For notebook development
