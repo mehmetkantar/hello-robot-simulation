@@ -1,0 +1,185 @@
+<?xml version="1.0"?>
+<mujoco model="kitchen_world">
+  <compiler angle="radian" coordinate="local" inertiafromgeom="true"/>
+  
+  <option timestep="0.002" gravity="0 0 -9.81" iterations="50" solver="PGS"/>
+  
+  <default>
+    <joint armature="0.01" damping="0.1"/>
+    <geom friction="0.9 0.1 0.1" density="1000" margin="0.001"/>
+  </default>
+  
+  <!-- Include Stretch robot -->
+  <include file="/home/user/stretch_mujoco/stretch_mujoco/models/stretch.xml"/>
+  
+  <asset>
+    <texture name="floor_tex" type="2d" builtin="checker" rgb1="0.8 0.8 0.8" rgb2="0.6 0.6 0.6" width="512" height="512"/>
+    <texture name="wall_tex" type="2d" builtin="flat" rgb1="0.9 0.9 0.9" width="512" height="512"/>
+    <texture name="cabinet_tex" type="2d" builtin="flat" rgb1="0.6 0.4 0.2" width="512" height="512"/>
+    <texture name="counter_tex" type="2d" builtin="flat" rgb1="0.8 0.8 0.9" width="512" height="512"/>
+    <texture name="appliance_tex" type="2d" builtin="flat" rgb1="0.3 0.3 0.3" width="512" height="512"/>
+    
+    <material name="floor_mat" texture="floor_tex" reflectance="0.1"/>
+    <material name="wall_mat" texture="wall_tex" reflectance="0.1"/>
+    <material name="cabinet_mat" texture="cabinet_tex" reflectance="0.1"/>
+    <material name="counter_mat" texture="counter_tex" reflectance="0.1"/>
+    <material name="appliance_mat" texture="appliance_tex" reflectance="0.1"/>
+  </asset>
+  
+  <worldbody>
+    <!-- Lighting -->
+    <light name="main_light" pos="0 0 3" dir="0 0 -1" diffuse="1 1 1"/>
+    <light name="ambient" pos="0 0 0" dir="0 0 -1" diffuse="0.3 0.3 0.3"/>
+    
+    <!-- Floor -->
+    <geom name="floor" type="plane" size="8 8 0.1" material="floor_mat" pos="0 0 0"/>
+    
+    <!-- Outer Walls -->
+    <body name="wall_north" pos="0 7.5 1.5">
+      <geom name="wall_north_geom" type="box" size="8 0.2 1.5" material="wall_mat"/>
+    </body>
+    <body name="wall_south" pos="0 -7.5 1.5">
+      <geom name="wall_south_geom" type="box" size="8 0.2 1.5" material="wall_mat"/>
+    </body>
+    <body name="wall_east" pos="7.5 0 1.5">
+      <geom name="wall_east_geom" type="box" size="0.2 8 1.5" material="wall_mat"/>
+    </body>
+    <body name="wall_west" pos="-7.5 0 1.5">
+      <geom name="wall_west_geom" type="box" size="0.2 8 1.5" material="wall_mat"/>
+    </body>
+    
+    <!-- Kitchen Island -->
+    <body name="kitchen_island" pos="0 0 0.9">
+      <geom name="island_base" type="box" size="1.5 0.8 0.4" material="cabinet_mat"/>
+      <geom name="island_top" type="box" size="1.6 0.9 0.05" material="counter_mat" pos="0 0 0.45"/>
+    </body>
+    
+    <!-- Lower Cabinets and Counters -->
+    <!-- North wall cabinets -->
+    <body name="cabinet_north_1" pos="-4 6.5 0.45">
+      <geom name="cabinet_n1_base" type="box" size="1.5 0.6 0.45" material="cabinet_mat"/>
+      <geom name="cabinet_n1_top" type="box" size="1.6 0.7 0.05" material="counter_mat" pos="0 0 0.5"/>
+    </body>
+    <body name="cabinet_north_2" pos="-1 6.5 0.45">
+      <geom name="cabinet_n2_base" type="box" size="1.5 0.6 0.45" material="cabinet_mat"/>
+      <geom name="cabinet_n2_top" type="box" size="1.6 0.7 0.05" material="counter_mat" pos="0 0 0.5"/>
+    </body>
+    <body name="cabinet_north_3" pos="2 6.5 0.45">
+      <geom name="cabinet_n3_base" type="box" size="1.5 0.6 0.45" material="cabinet_mat"/>
+      <geom name="cabinet_n3_top" type="box" size="1.6 0.7 0.05" material="counter_mat" pos="0 0 0.5"/>
+    </body>
+    
+    <!-- East wall cabinets -->
+    <body name="cabinet_east_1" pos="6.5 3 0.45">
+      <geom name="cabinet_e1_base" type="box" size="0.6 1.5 0.45" material="cabinet_mat"/>
+      <geom name="cabinet_e1_top" type="box" size="0.7 1.6 0.05" material="counter_mat" pos="0 0 0.5"/>
+    </body>
+    <body name="cabinet_east_2" pos="6.5 0 0.45">
+      <geom name="cabinet_e2_base" type="box" size="0.6 1.5 0.45" material="cabinet_mat"/>
+      <geom name="cabinet_e2_top" type="box" size="0.7 1.6 0.05" material="counter_mat" pos="0 0 0.5"/>
+    </body>
+    <body name="cabinet_east_3" pos="6.5 -3 0.45">
+      <geom name="cabinet_e3_base" type="box" size="0.6 1.5 0.45" material="cabinet_mat"/>
+      <geom name="cabinet_e3_top" type="box" size="0.7 1.6 0.05" material="counter_mat" pos="0 0 0.5"/>
+    </body>
+    
+    <!-- Upper Cabinets -->
+    <body name="upper_cabinet_1" pos="-4 6.2 2.2">
+      <geom name="upper_cab_1" type="box" size="1.5 0.3 0.6" material="cabinet_mat"/>
+    </body>
+    <body name="upper_cabinet_2" pos="-1 6.2 2.2">
+      <geom name="upper_cab_2" type="box" size="1.5 0.3 0.6" material="cabinet_mat"/>
+    </body>
+    <body name="upper_cabinet_3" pos="2 6.2 2.2">
+      <geom name="upper_cab_3" type="box" size="1.5 0.3 0.6" material="cabinet_mat"/>
+    </body>
+    
+    <!-- Appliances -->
+    <!-- Refrigerator -->
+    <body name="refrigerator" pos="5.5 -6 1.0">
+      <geom name="fridge" type="box" size="0.8 0.8 1.0" material="appliance_mat"/>
+    </body>
+    
+    <!-- Stove -->
+    <body name="stove" pos="2 5.8 0.45">
+      <geom name="stove_base" type="box" size="0.8 0.8 0.45" material="appliance_mat"/>
+      <geom name="stove_top" type="box" size="0.8 0.8 0.05" material="appliance_mat" pos="0 0 0.5"/>
+      <!-- Burners -->
+      <geom name="burner_1" type="cylinder" size="0.15 0.02" material="appliance_mat" pos="-0.3 -0.3 0.52"/>
+      <geom name="burner_2" type="cylinder" size="0.15 0.02" material="appliance_mat" pos="0.3 -0.3 0.52"/>
+      <geom name="burner_3" type="cylinder" size="0.15 0.02" material="appliance_mat" pos="-0.3 0.3 0.52"/>
+      <geom name="burner_4" type="cylinder" size="0.15 0.02" material="appliance_mat" pos="0.3 0.3 0.52"/>
+    </body>
+    
+    <!-- Dishwasher -->
+    <body name="dishwasher" pos="-1 5.8 0.45">
+      <geom name="dishwasher_geom" type="box" size="0.6 0.6 0.45" material="appliance_mat"/>
+    </body>
+    
+    <!-- Microwave -->
+    <body name="microwave" pos="2 5.8 1.2">
+      <geom name="microwave_geom" type="box" size="0.5 0.4 0.3" material="appliance_mat"/>
+    </body>
+    
+    <!-- Kitchen Sink -->
+    <body name="sink" pos="-4 5.8 0.95">
+      <geom name="sink_basin" type="box" size="0.4 0.3 0.1" material="appliance_mat"/>
+      <geom name="faucet" type="cylinder" size="0.03 0.3" material="appliance_mat" pos="0 -0.2 0.3"/>
+    </body>
+    
+    <!-- Dining Table -->
+    <body name="dining_table" pos="-3 -3 0.75">
+      <geom name="table_top" type="box" size="1.2 0.8 0.05" material="counter_mat"/>
+      <geom name="table_leg_1" type="cylinder" size="0.05 0.75" material="cabinet_mat" pos="-1.1 -0.7 -0.75"/>
+      <geom name="table_leg_2" type="cylinder" size="0.05 0.75" material="cabinet_mat" pos="1.1 -0.7 -0.75"/>
+      <geom name="table_leg_3" type="cylinder" size="0.05 0.75" material="cabinet_mat" pos="-1.1 0.7 -0.75"/>
+      <geom name="table_leg_4" type="cylinder" size="0.05 0.75" material="cabinet_mat" pos="1.1 0.7 -0.75"/>
+    </body>
+    
+    <!-- Dining Chairs -->
+    <body name="chair_1" pos="-3 -4.2 0.45">
+      <geom name="chair_1_seat" type="box" size="0.25 0.25 0.05" material="cabinet_mat"/>
+      <geom name="chair_1_back" type="box" size="0.25 0.05 0.4" material="cabinet_mat" pos="0 -0.2 0.4"/>
+      <geom name="chair_1_leg_1" type="cylinder" size="0.02 0.45" material="cabinet_mat" pos="-0.2 -0.2 -0.45"/>
+      <geom name="chair_1_leg_2" type="cylinder" size="0.02 0.45" material="cabinet_mat" pos="0.2 -0.2 -0.45"/>
+      <geom name="chair_1_leg_3" type="cylinder" size="0.02 0.45" material="cabinet_mat" pos="-0.2 0.2 -0.45"/>
+      <geom name="chair_1_leg_4" type="cylinder" size="0.02 0.45" material="cabinet_mat" pos="0.2 0.2 -0.45"/>
+    </body>
+    
+    <body name="chair_2" pos="-2 -3 0.45">
+      <geom name="chair_2_seat" type="box" size="0.25 0.25 0.05" material="cabinet_mat"/>
+      <geom name="chair_2_back" type="box" size="0.05 0.25 0.4" material="cabinet_mat" pos="0.2 0 0.4"/>
+      <geom name="chair_2_leg_1" type="cylinder" size="0.02 0.45" material="cabinet_mat" pos="-0.2 -0.2 -0.45"/>
+      <geom name="chair_2_leg_2" type="cylinder" size="0.02 0.45" material="cabinet_mat" pos="0.2 -0.2 -0.45"/>
+      <geom name="chair_2_leg_3" type="cylinder" size="0.02 0.45" material="cabinet_mat" pos="-0.2 0.2 -0.45"/>
+      <geom name="chair_2_leg_4" type="cylinder" size="0.02 0.45" material="cabinet_mat" pos="0.2 0.2 -0.45"/>
+    </body>
+    
+    <!-- Pantry -->
+    <body name="pantry" pos="-6 -3 1.0">
+      <geom name="pantry_geom" type="box" size="0.8 1.0 1.0" material="cabinet_mat"/>
+    </body>
+    
+    <!-- Kitchen Bar Stools -->
+    <body name="bar_stool_1" pos="1.5 -1.5 0.65">
+      <geom name="stool_1_seat" type="cylinder" size="0.2 0.05" material="cabinet_mat"/>
+      <geom name="stool_1_leg" type="cylinder" size="0.03 0.65" material="cabinet_mat" pos="0 0 -0.65"/>
+    </body>
+    
+    <body name="bar_stool_2" pos="-1.5 -1.5 0.65">
+      <geom name="stool_2_seat" type="cylinder" size="0.2 0.05" material="cabinet_mat"/>
+      <geom name="stool_2_leg" type="cylinder" size="0.03 0.65" material="cabinet_mat" pos="0 0 -0.65"/>
+    </body>
+    
+    <!-- Trash Can -->
+    <body name="trash_can" pos="4 5 0.3">
+      <geom name="trash_can_geom" type="cylinder" size="0.2 0.3" material="appliance_mat"/>
+    </body>
+    
+    <!-- Kitchen Window -->
+    <body name="window_frame" pos="0 7.4 2.0">
+      <geom name="window_frame_geom" type="box" size="2.0 0.1 1.0" material="cabinet_mat"/>
+    </body>
+    
+  </worldbody>
+</mujoco>

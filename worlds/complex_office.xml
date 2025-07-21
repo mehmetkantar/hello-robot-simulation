@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<mujoco model="complex_office">
+  <compiler angle="degree" coordinate="local" inertiafromgeom="true"/>
+  <option timestep="0.002" gravity="0 0 -9.81" iterations="50" solver="PGS"/>
+  
+  <default>
+    <joint armature="0.01" damping="0.1"/>
+    <geom friction="0.9 0.1 0.1" density="1000" margin="0.001"/>
+  </default>
+  
+  <asset>
+    <texture name="floor_tex" type="2d" builtin="checker" rgb1="0.9 0.9 0.9" rgb2="0.8 0.8 0.8" width="512" height="512"/>
+    <texture name="wall_tex" type="2d" builtin="flat" rgb1="0.95 0.95 0.95" width="512" height="512"/>
+    <texture name="office_tex" type="2d" builtin="flat" rgb1="0.7 0.5 0.3" width="512" height="512"/>
+    <texture name="lab_tex" type="2d" builtin="flat" rgb1="0.4 0.6 0.8" width="512" height="512"/>
+    <texture name="furniture_tex" type="2d" builtin="flat" rgb1="0.5 0.5 0.5" width="512" height="512"/>
+    
+    <material name="floor_mat" texture="floor_tex" reflectance="0.2"/>
+    <material name="wall_mat" texture="wall_tex" reflectance="0.1"/>
+    <material name="office_mat" texture="office_tex" reflectance="0.1"/>
+    <material name="lab_mat" texture="lab_tex" reflectance="0.1"/>
+    <material name="furniture_mat" texture="furniture_tex" reflectance="0.1"/>
+  </asset>
+  
+  <worldbody>
+    <!-- Lighting -->
+    <light name="main_light" pos="0 0 4" dir="0 0 -1" diffuse="1 1 1"/>
+    <light name="ambient" pos="0 0 0" dir="0 0 -1" diffuse="0.4 0.4 0.4"/>
+    
+    <!-- Floor -->
+    <geom name="floor" type="plane" size="12.5 10 0.1" material="floor_mat" pos="0 0 0"/>
+    
+    <!-- Robot will be added automatically by StretchMujocoSimulator when scene_path is used -->
+    
+    <!-- External Walls -->
+    <geom name="wall_north" type="box" size="12.5 0.1 1.5" pos="0 9.9 1.5" material="wall_mat"/>
+    <geom name="wall_south" type="box" size="12.5 0.1 1.5" pos="0 -9.9 1.5" material="wall_mat"/>
+    <geom name="wall_east" type="box" size="0.1 10 1.5" pos="12.4 0 1.5" material="wall_mat"/>
+    <geom name="wall_west" type="box" size="0.1 10 1.5" pos="-12.4 0 1.5" material="wall_mat"/>
+    
+    <!-- Central Corridor Walls -->
+    <geom name="corridor_west" type="box" size="0.1 10 1.5" pos="-2 0 1.5" material="wall_mat"/>
+    <geom name="corridor_east" type="box" size="0.1 10 1.5" pos="2 0 1.5" material="wall_mat"/>
+    
+    <!-- Cross Corridors -->
+    <geom name="cross_north" type="box" size="12.5 0.1 1.5" pos="0 5 1.5" material="wall_mat"/>
+    <geom name="cross_south" type="box" size="12.5 0.1 1.5" pos="0 -5 1.5" material="wall_mat"/>
+    
+    <!-- Room Division Walls -->
+    <!-- Southwest Office -->
+    <geom name="sw_wall" type="box" size="0.1 5 1.5" pos="-7 -7.5 1.5" material="wall_mat"/>
+    <geom name="sw_wall_h" type="box" size="5 0.1 1.5" pos="-9.5 -7.5 1.5" material="wall_mat"/>
+    
+    <!-- Southeast Lab -->
+    <geom name="se_wall" type="box" size="0.1 5 1.5" pos="7 -7.5 1.5" material="wall_mat"/>
+    <geom name="se_wall_h" type="box" size="5 0.1 1.5" pos="9.5 -7.5 1.5" material="wall_mat"/>
+    
+    <!-- Northwest Meeting -->
+    <geom name="nw_wall" type="box" size="0.1 5 1.5" pos="-7 7.5 1.5" material="wall_mat"/>
+    <geom name="nw_wall_h" type="box" size="5 0.1 1.5" pos="-9.5 7.5 1.5" material="wall_mat"/>
+    
+    <!-- Northeast Library -->
+    <geom name="ne_wall" type="box" size="0.1 5 1.5" pos="7 7.5 1.5" material="wall_mat"/>
+    <geom name="ne_wall_h" type="box" size="5 0.1 1.5" pos="9.5 7.5 1.5" material="wall_mat"/>
+    
+    <!-- Central Room Walls -->
+    <geom name="central_west" type="box" size="0.1 2 1.5" pos="-10 0 1.5" material="wall_mat"/>
+    <geom name="central_east" type="box" size="0.1 2 1.5" pos="10 0 1.5" material="wall_mat"/>
+    
+    <!-- Office Furniture (Southwest) -->
+    <geom name="office_desk1" type="box" size="0.8 0.4 0.4" pos="-9 -8 0.4" material="office_mat"/>
+    <geom name="office_chair1" type="cylinder" size="0.3 0.45" pos="-8 -8 0.45" material="furniture_mat"/>
+    <geom name="office_cabinet1" type="box" size="0.3 0.6 0.8" pos="-10 -6 0.8" material="office_mat"/>
+    
+    <!-- Lab Equipment (Southeast) -->
+    <geom name="lab_bench1" type="box" size="1.2 0.6 0.45" pos="9 -8 0.45" material="lab_mat"/>
+    <geom name="lab_equipment1" type="box" size="0.4 0.4 0.6" pos="8 -8 0.6" material="furniture_mat"/>
+    <geom name="lab_storage1" type="box" size="0.3 0.3 1.2" pos="10 -6 1.2" material="lab_mat"/>
+    
+    <!-- Meeting Room Furniture (Northwest) -->
+    <geom name="meeting_table" type="box" size="1.5 0.8 0.4" pos="-9 8 0.4" material="office_mat"/>
+    <geom name="meeting_chair1" type="cylinder" size="0.2 0.45" pos="-8 8 0.45" material="furniture_mat"/>
+    <geom name="meeting_chair2" type="cylinder" size="0.2 0.45" pos="-10 8 0.45" material="furniture_mat"/>
+    <geom name="meeting_chair3" type="cylinder" size="0.2 0.45" pos="-9 7 0.45" material="furniture_mat"/>
+    <geom name="meeting_chair4" type="cylinder" size="0.2 0.45" pos="-9 9 0.45" material="furniture_mat"/>
+    
+    <!-- Library Furniture (Northeast) -->
+    <geom name="bookshelf1" type="box" size="0.3 1.5 1.8" pos="9 8 1.8" material="office_mat"/>
+    <geom name="bookshelf2" type="box" size="0.3 1.5 1.8" pos="8 8 1.8" material="office_mat"/>
+    <geom name="bookshelf3" type="box" size="0.3 1.5 1.8" pos="10 8 1.8" material="office_mat"/>
+    <geom name="reading_table" type="box" size="0.6 0.6 0.4" pos="9.5 6.5 0.4" material="office_mat"/>
+    
+    <!-- Central Room Furniture -->
+    <geom name="central_desk_w" type="box" size="0.6 0.8 0.4" pos="-9 1 0.4" material="office_mat"/>
+    <geom name="central_desk_e" type="box" size="0.6 0.8 0.4" pos="9 1 0.4" material="office_mat"/>
+    <geom name="central_chair_w" type="cylinder" size="0.2 0.45" pos="-9 0 0.45" material="furniture_mat"/>
+    <geom name="central_chair_e" type="cylinder" size="0.2 0.45" pos="9 0 0.45" material="furniture_mat"/>
+    
+    <!-- Corridor Furniture -->
+    <geom name="corridor_info" type="cylinder" size="0.2 0.8" pos="-1 0 0.8" material="furniture_mat"/>
+    <geom name="corridor_trash1" type="cylinder" size="0.15 0.6" pos="1 3 0.6" material="furniture_mat"/>
+    <geom name="corridor_fountain" type="cylinder" size="0.15 0.4" pos="0 -3 0.4" material="furniture_mat"/>
+    
+    <!-- Corridor Benches -->
+    <geom name="bench_north" type="box" size="0.8 0.3 0.2" pos="-4 5 0.2" material="furniture_mat"/>
+    <geom name="bench_south" type="box" size="0.8 0.3 0.2" pos="4 -5 0.2" material="furniture_mat"/>
+    
+    <!-- Plants -->
+    <geom name="plant1" type="cylinder" size="0.1 0.5" pos="-1 7 0.5" material="lab_mat"/>
+    <geom name="plant2" type="cylinder" size="0.1 0.5" pos="1 -7 0.5" material="lab_mat"/>
+    
+    <!-- Narrow Passage Obstacles -->
+    <geom name="narrow_obs1" type="cylinder" size="0.1 0.4" pos="-0.5 5 0.4" material="furniture_mat"/>
+    <geom name="narrow_obs2" type="cylinder" size="0.1 0.4" pos="0.5 -5 0.4" material="furniture_mat"/>
+    
+    <!-- Movable Equipment -->
+    <geom name="movable1" type="box" size="0.3 0.3 0.6" pos="-3 2 0.6" material="lab_mat"/>
+    <geom name="movable2" type="box" size="0.3 0.3 0.6" pos="3 -2 0.6" material="lab_mat"/>
+    
+  </worldbody>
+</mujoco>

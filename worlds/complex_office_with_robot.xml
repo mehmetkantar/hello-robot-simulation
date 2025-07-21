@@ -1,0 +1,164 @@
+<mujoco model="stretch complex office">
+  <include file="/home/user/stretch_mujoco/stretch_mujoco/models/stretch.xml"/>
+
+  <statistic center="0 0 .75" extent="15" meansize="0.05"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-120" elevation="-20"/>
+  </visual>
+
+  <asset>
+    <!-- Materials -->
+    <material name="floor_mat" rgba="0.8 0.8 0.9 1" reflectance="0.2"/>
+    <material name="wall_mat" rgba="0.9 0.9 0.8 1" reflectance="0.1"/>
+    <material name="door_mat" rgba="0.6 0.4 0.2 1" reflectance="0.1"/>
+    <material name="office_mat" rgba="0.7 0.8 0.9 1" reflectance="0.1"/>
+    <material name="lab_mat" rgba="0.9 0.7 0.7 1" reflectance="0.1"/>
+    <material name="furniture_mat" rgba="0.5 0.3 0.2 1" reflectance="0.1"/>
+    <texture type="skybox" builtin="gradient" rgb1="0.44 0.80 1.00" rgb2="1 1 1" width="512" height="3072"/>
+  </asset>
+  
+  <worldbody>
+    <!-- Lighting -->
+    <light name="main_light" pos="0 0 4" dir="0 0 -1" diffuse="1 1 1"/>
+    <light name="ambient" pos="0 0 0" dir="0 0 -1" diffuse="0.4 0.4 0.4"/>
+    
+    <!-- Floor -->
+    <geom name="floor" type="plane" size="12.5 10 0.1" material="floor_mat" pos="0 0 0"/>
+    
+    <!-- External Walls -->
+    <geom name="wall_north" type="box" size="12.5 0.1 1.5" pos="0 9.9 1.5" material="wall_mat"/>
+    <geom name="wall_south" type="box" size="12.5 0.1 1.5" pos="0 -9.9 1.5" material="wall_mat"/>
+    <geom name="wall_east" type="box" size="0.1 10 1.5" pos="12.4 0 1.5" material="wall_mat"/>
+    <geom name="wall_west" type="box" size="0.1 10 1.5" pos="-12.4 0 1.5" material="wall_mat"/>
+    
+    <!-- Main Corridor (horizontal) -->
+    <geom name="corridor_wall_n" type="box" size="12.5 0.1 1.5" pos="0 1.5 1.5" material="wall_mat"/>
+    <geom name="corridor_wall_s" type="box" size="12.5 0.1 1.5" pos="0 -1.5 1.5" material="wall_mat"/>
+    
+    <!-- Vertical Corridors -->
+    <geom name="vcorridor1_wall_e" type="box" size="0.1 3.5 1.5" pos="4.9 6 1.5" material="wall_mat"/>
+    <geom name="vcorridor1_wall_w" type="box" size="0.1 3.5 1.5" pos="3.1 6 1.5" material="wall_mat"/>
+    
+    <geom name="vcorridor2_wall_e" type="box" size="0.1 3.5 1.5" pos="-3.1 6 1.5" material="wall_mat"/>
+    <geom name="vcorridor2_wall_w" type="box" size="0.1 3.5 1.5" pos="-4.9 6 1.5" material="wall_mat"/>
+    
+    <geom name="vcorridor3_wall_e" type="box" size="0.1 3.5 1.5" pos="4.9 -6 1.5" material="wall_mat"/>
+    <geom name="vcorridor3_wall_w" type="box" size="0.1 3.5 1.5" pos="3.1 -6 1.5" material="wall_mat"/>
+    
+    <geom name="vcorridor4_wall_e" type="box" size="0.1 3.5 1.5" pos="-3.1 -6 1.5" material="wall_mat"/>
+    <geom name="vcorridor4_wall_w" type="box" size="0.1 3.5 1.5" pos="-4.9 -6 1.5" material="wall_mat"/>
+    
+    <!-- Office Rooms -->
+    <!-- Office 1 (NE) -->
+    <geom name="office1_wall_s" type="box" size="3.8 0.1 1.5" pos="8.7 3.5 1.5" material="office_mat"/>
+    <geom name="office1_wall_w" type="box" size="0.1 2.75 1.5" pos="5.0 5.25 1.5" material="office_mat"/>
+    
+    <!-- Office 2 (NW) -->
+    <geom name="office2_wall_s" type="box" size="3.8 0.1 1.5" pos="-8.7 3.5 1.5" material="office_mat"/>
+    <geom name="office2_wall_e" type="box" size="0.1 2.75 1.5" pos="-5.0 5.25 1.5" material="office_mat"/>
+    
+    <!-- Office 3 (SE) -->
+    <geom name="office3_wall_n" type="box" size="3.8 0.1 1.5" pos="8.7 -3.5 1.5" material="office_mat"/>
+    <geom name="office3_wall_w" type="box" size="0.1 2.75 1.5" pos="5.0 -5.25 1.5" material="office_mat"/>
+    
+    <!-- Office 4 (SW) -->
+    <geom name="office4_wall_n" type="box" size="3.8 0.1 1.5" pos="-8.7 -3.5 1.5" material="office_mat"/>
+    <geom name="office4_wall_e" type="box" size="0.1 2.75 1.5" pos="-5.0 -5.25 1.5" material="office_mat"/>
+    
+    <!-- Laboratory Rooms -->
+    <!-- Lab 1 (Far North) -->
+    <geom name="lab1_wall_s" type="box" size="8 0.1 1.5" pos="0 7.5 1.5" material="lab_mat"/>
+    
+    <!-- Lab 2 (Far South) -->
+    <geom name="lab2_wall_n" type="box" size="8 0.1 1.5" pos="0 -7.5 1.5" material="lab_mat"/>
+    
+    <!-- Conference Room (Center East) -->
+    <geom name="conf_wall_w" type="box" size="0.1 1.4 1.5" pos="9.9 0 1.5" material="office_mat"/>
+    <geom name="conf_wall_n" type="box" size="2.4 0.1 1.5" pos="11.3 1.4 1.5" material="office_mat"/>
+    <geom name="conf_wall_s" type="box" size="2.4 0.1 1.5" pos="11.3 -1.4 1.5" material="office_mat"/>
+    
+    <!-- Storage Room (Center West) -->
+    <geom name="storage_wall_e" type="box" size="0.1 1.4 1.5" pos="-9.9 0 1.5" material="office_mat"/>
+    <geom name="storage_wall_n" type="box" size="2.4 0.1 1.5" pos="-11.3 1.4 1.5" material="office_mat"/>
+    <geom name="storage_wall_s" type="box" size="2.4 0.1 1.5" pos="-11.3 -1.4 1.5" material="office_mat"/>
+    
+    <!-- Furniture and Obstacles -->
+    <!-- Office 1 furniture -->
+    <body name="desk1" pos="8 5 0.4">
+      <geom type="box" size="0.8 0.4 0.4" material="furniture_mat"/>
+    </body>
+    <body name="chair1" pos="8 4.2 0.25">
+      <geom type="cylinder" size="0.3 0.25" material="furniture_mat"/>
+    </body>
+    
+    <!-- Office 2 furniture -->
+    <body name="desk2" pos="-8 5 0.4">
+      <geom type="box" size="0.8 0.4 0.4" material="furniture_mat"/>
+    </body>
+    <body name="chair2" pos="-8 4.2 0.25">
+      <geom type="cylinder" size="0.3 0.25" material="furniture_mat"/>
+    </body>
+    
+    <!-- Office 3 furniture -->
+    <body name="desk3" pos="8 -5 0.4">
+      <geom type="box" size="0.8 0.4 0.4" material="furniture_mat"/>
+    </body>
+    <body name="chair3" pos="8 -4.2 0.25">
+      <geom type="cylinder" size="0.3 0.25" material="furniture_mat"/>
+    </body>
+    
+    <!-- Office 4 furniture -->
+    <body name="desk4" pos="-8 -5 0.4">
+      <geom type="box" size="0.8 0.4 0.4" material="furniture_mat"/>
+    </body>
+    <body name="chair4" pos="-8 -4.2 0.25">
+      <geom type="cylinder" size="0.3 0.25" material="furniture_mat"/>
+    </body>
+    
+    <!-- Conference room table -->
+    <body name="conf_table" pos="11 0 0.4">
+      <geom type="box" size="1.2 0.8 0.4" material="furniture_mat"/>
+    </body>
+    
+    <!-- Lab equipment -->
+    <body name="lab_bench1" pos="2 8.5 0.45">
+      <geom type="box" size="1.5 0.3 0.45" material="furniture_mat"/>
+    </body>
+    <body name="lab_bench2" pos="-2 8.5 0.45">
+      <geom type="box" size="1.5 0.3 0.45" material="furniture_mat"/>
+    </body>
+    <body name="lab_bench3" pos="2 -8.5 0.45">
+      <geom type="box" size="1.5 0.3 0.45" material="furniture_mat"/>
+    </body>
+    <body name="lab_bench4" pos="-2 -8.5 0.45">
+      <geom type="box" size="1.5 0.3 0.45" material="furniture_mat"/>
+    </body>
+    
+    <!-- Storage shelves -->
+    <body name="shelf1" pos="-11 0.8 0.8">
+      <geom type="box" size="0.2 0.5 0.8" material="furniture_mat"/>
+    </body>
+    <body name="shelf2" pos="-11 -0.8 0.8">
+      <geom type="box" size="0.2 0.5 0.8" material="furniture_mat"/>
+    </body>
+    
+    <!-- Corridor obstacles -->
+    <body name="water_cooler" pos="1.5 0 0.6">
+      <geom type="cylinder" size="0.2 0.6" material="furniture_mat"/>
+    </body>
+    <body name="plant1" pos="-1.5 0 0.3">
+      <geom type="cylinder" size="0.15 0.3" rgba="0.2 0.8 0.2 1"/>
+    </body>
+    
+    <!-- Fire extinguisher boxes -->
+    <body name="fire_ext1" pos="0 1.4 0.8">
+      <geom type="box" size="0.1 0.1 0.3" rgba="1 0 0 1"/>
+    </body>
+    <body name="fire_ext2" pos="0 -1.4 0.8">
+      <geom type="box" size="0.1 0.1 0.3" rgba="1 0 0 1"/>
+    </body>
+  </worldbody>
+</mujoco>

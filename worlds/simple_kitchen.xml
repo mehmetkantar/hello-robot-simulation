@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<mujoco model="simple_kitchen">
+  <compiler angle="degree" coordinate="local" inertiafromgeom="true"/>
+  <option timestep="0.002" gravity="0 0 -9.81" iterations="50" solver="PGS"/>
+  
+  <default>
+    <joint armature="0.01" damping="0.1"/>
+    <geom friction="0.9 0.1 0.1" density="1000" margin="0.001"/>
+  </default>
+  
+  <asset>
+    <texture name="floor_tex" type="2d" builtin="checker" rgb1="0.8 0.8 0.8" rgb2="0.6 0.6 0.6" width="512" height="512"/>
+    <texture name="wall_tex" type="2d" builtin="flat" rgb1="0.9 0.9 0.9" width="512" height="512"/>
+    <texture name="cabinet_tex" type="2d" builtin="flat" rgb1="0.6 0.4 0.2" width="512" height="512"/>
+    <texture name="counter_tex" type="2d" builtin="flat" rgb1="0.8 0.8 0.9" width="512" height="512"/>
+    <texture name="appliance_tex" type="2d" builtin="flat" rgb1="0.3 0.3 0.3" width="512" height="512"/>
+    
+    <material name="floor_mat" texture="floor_tex"/>
+    <material name="wall_mat" texture="wall_tex"/>
+    <material name="cabinet_mat" texture="cabinet_tex"/>
+    <material name="counter_mat" texture="counter_tex"/>
+    <material name="appliance_mat" texture="appliance_tex"/>
+  </asset>
+  
+  <worldbody>
+    <!-- Lighting -->
+    <light name="main_light" pos="0 0 3" dir="0 0 -1" diffuse="1 1 1"/>
+    
+    <!-- Floor -->
+    <geom name="floor" type="plane" size="8 8 0.1" material="floor_mat"/>
+    
+    <!-- Walls -->
+    <geom name="wall_north" type="box" size="8 0.2 1.5" pos="0 7.5 1.5" material="wall_mat"/>
+    <geom name="wall_south" type="box" size="8 0.2 1.5" pos="0 -7.5 1.5" material="wall_mat"/>
+    <geom name="wall_east" type="box" size="0.2 8 1.5" pos="7.5 0 1.5" material="wall_mat"/>
+    <geom name="wall_west" type="box" size="0.2 8 1.5" pos="-7.5 0 1.5" material="wall_mat"/>
+    
+    <!-- Kitchen Island -->
+    <geom name="island_base" type="box" size="1.5 0.8 0.4" pos="0 0 0.4" material="cabinet_mat"/>
+    <geom name="island_top" type="box" size="1.6 0.9 0.05" pos="0 0 0.85" material="counter_mat"/>
+    
+    <!-- Lower Cabinets -->
+    <geom name="cabinet_n1" type="box" size="1.5 0.6 0.45" pos="-4 6.5 0.45" material="cabinet_mat"/>
+    <geom name="cabinet_n1_top" type="box" size="1.6 0.7 0.05" pos="-4 6.5 0.95" material="counter_mat"/>
+    
+    <geom name="cabinet_n2" type="box" size="1.5 0.6 0.45" pos="-1 6.5 0.45" material="cabinet_mat"/>
+    <geom name="cabinet_n2_top" type="box" size="1.6 0.7 0.05" pos="-1 6.5 0.95" material="counter_mat"/>
+    
+    <geom name="cabinet_n3" type="box" size="1.5 0.6 0.45" pos="2 6.5 0.45" material="cabinet_mat"/>
+    <geom name="cabinet_n3_top" type="box" size="1.6 0.7 0.05" pos="2 6.5 0.95" material="counter_mat"/>
+    
+    <!-- East wall cabinets -->
+    <geom name="cabinet_e1" type="box" size="0.6 1.5 0.45" pos="6.5 3 0.45" material="cabinet_mat"/>
+    <geom name="cabinet_e1_top" type="box" size="0.7 1.6 0.05" pos="6.5 3 0.95" material="counter_mat"/>
+    
+    <geom name="cabinet_e2" type="box" size="0.6 1.5 0.45" pos="6.5 0 0.45" material="cabinet_mat"/>
+    <geom name="cabinet_e2_top" type="box" size="0.7 1.6 0.05" pos="6.5 0 0.95" material="counter_mat"/>
+    
+    <geom name="cabinet_e3" type="box" size="0.6 1.5 0.45" pos="6.5 -3 0.45" material="cabinet_mat"/>
+    <geom name="cabinet_e3_top" type="box" size="0.7 1.6 0.05" pos="6.5 -3 0.95" material="counter_mat"/>
+    
+    <!-- Upper Cabinets -->
+    <geom name="upper_cab_1" type="box" size="1.5 0.3 0.6" pos="-4 6.2 2.2" material="cabinet_mat"/>
+    <geom name="upper_cab_2" type="box" size="1.5 0.3 0.6" pos="-1 6.2 2.2" material="cabinet_mat"/>
+    <geom name="upper_cab_3" type="box" size="1.5 0.3 0.6" pos="2 6.2 2.2" material="cabinet_mat"/>
+    
+    <!-- Appliances -->
+    <geom name="fridge" type="box" size="0.8 0.8 1.0" pos="5.5 -6 1.0" material="appliance_mat"/>
+    <geom name="stove" type="box" size="0.8 0.8 0.5" pos="2 5.8 0.5" material="appliance_mat"/>
+    <geom name="dishwasher" type="box" size="0.6 0.6 0.45" pos="-1 5.8 0.45" material="appliance_mat"/>
+    <geom name="microwave" type="box" size="0.5 0.4 0.3" pos="2 5.8 1.2" material="appliance_mat"/>
+    <geom name="sink" type="box" size="0.4 0.3 0.1" pos="-4 5.8 0.95" material="appliance_mat"/>
+    
+    <!-- Dining Table -->
+    <geom name="table_top" type="box" size="1.2 0.8 0.05" pos="-3 -3 0.75" material="counter_mat"/>
+    <geom name="table_leg_1" type="cylinder" size="0.05 0.75" pos="-3.9 -3.6 0.375" material="cabinet_mat"/>
+    <geom name="table_leg_2" type="cylinder" size="0.05 0.75" pos="-2.1 -3.6 0.375" material="cabinet_mat"/>
+    <geom name="table_leg_3" type="cylinder" size="0.05 0.75" pos="-3.9 -2.4 0.375" material="cabinet_mat"/>
+    <geom name="table_leg_4" type="cylinder" size="0.05 0.75" pos="-2.1 -2.4 0.375" material="cabinet_mat"/>
+    
+    <!-- Dining Chairs -->
+    <geom name="chair_1_seat" type="box" size="0.25 0.25 0.05" pos="-3 -4.2 0.45" material="cabinet_mat"/>
+    <geom name="chair_1_back" type="box" size="0.25 0.05 0.4" pos="-3 -4.4 0.85" material="cabinet_mat"/>
+    
+    <geom name="chair_2_seat" type="box" size="0.25 0.25 0.05" pos="-2 -3 0.45" material="cabinet_mat"/>
+    <geom name="chair_2_back" type="box" size="0.05 0.25 0.4" pos="-1.8 -3 0.85" material="cabinet_mat"/>
+    
+    <!-- Pantry -->
+    <geom name="pantry" type="box" size="0.8 1.0 1.0" pos="-6 -3 1.0" material="cabinet_mat"/>
+    
+    <!-- Bar Stools -->
+    <geom name="stool_1_seat" type="cylinder" size="0.2 0.05" pos="1.5 -1.5 0.65" material="cabinet_mat"/>
+    <geom name="stool_1_leg" type="cylinder" size="0.03 0.65" pos="1.5 -1.5 0.325" material="cabinet_mat"/>
+    
+    <geom name="stool_2_seat" type="cylinder" size="0.2 0.05" pos="-1.5 -1.5 0.65" material="cabinet_mat"/>
+    <geom name="stool_2_leg" type="cylinder" size="0.03 0.65" pos="-1.5 -1.5 0.325" material="cabinet_mat"/>
+    
+    <!-- Trash Can -->
+    <geom name="trash_can" type="cylinder" size="0.2 0.3" pos="4 5 0.3" material="appliance_mat"/>
+    
+    <!-- Internal Walls for Room Division -->
+    <geom name="internal_wall_1" type="box" size="0.1 3.0 1.5" pos="-5 -1 1.5" material="wall_mat"/>
+    <geom name="internal_wall_2" type="box" size="2.0 0.1 1.5" pos="3 -4 1.5" material="wall_mat"/>
+    
+  </worldbody>
+</mujoco>
