@@ -24,7 +24,7 @@ try:
     from geometry_msgs.msg import Twist, PoseStamped, TransformStamped
     from sensor_msgs.msg import JointState, Image, LaserScan
     from nav_msgs.msg import Odometry
-    from std_msgs.msg import Header
+    from std_msgs.msg import Header, Float64
     from tf2_ros import TransformBroadcaster
     import tf_transformations
     from cv_bridge import CvBridge
@@ -91,6 +91,22 @@ class StretchSLAMBridgeImproved(Node):
         # ROS2 Subscribers
         self.cmd_vel_sub = self.create_subscription(
             Twist, '/cmd_vel', self.cmd_vel_callback, 10)
+            
+        # Joint command subscribers
+        self.lift_cmd_sub = self.create_subscription(
+            Float64, '/stretch_controller/lift_joint/command', self.lift_cmd_callback, 10)
+        self.arm_cmd_sub = self.create_subscription(
+            Float64, '/stretch_controller/arm_joint/command', self.arm_cmd_callback, 10)
+        self.wrist_yaw_cmd_sub = self.create_subscription(
+            Float64, '/stretch_controller/wrist_yaw/command', self.wrist_yaw_cmd_callback, 10)
+        self.wrist_pitch_cmd_sub = self.create_subscription(
+            Float64, '/stretch_controller/wrist_pitch/command', self.wrist_pitch_cmd_callback, 10)
+        self.gripper_cmd_sub = self.create_subscription(
+            Float64, '/stretch_controller/gripper_joint/command', self.gripper_cmd_callback, 10)
+        self.head_pan_cmd_sub = self.create_subscription(
+            Float64, '/stretch_controller/head_pan_joint/command', self.head_pan_cmd_callback, 10)
+        self.head_tilt_cmd_sub = self.create_subscription(
+            Float64, '/stretch_controller/head_tilt_joint/command', self.head_tilt_cmd_callback, 10)
         
         # Timers for periodic publishing
         self.joint_timer = self.create_timer(0.1, self.publish_joint_states)
@@ -101,7 +117,7 @@ class StretchSLAMBridgeImproved(Node):
         
         self.get_logger().info("Enhanced Stretch SLAM Bridge initialized")
     
-    def start_simulation(self, environment="kitchen", layout=2, style=1):
+    def start_simulation(self, environment="kitchen", layout=2, style=1, headless=False):
         """Start simulation with specific environment"""
         try:
             # Configure cameras and sensors
@@ -111,7 +127,7 @@ class StretchSLAMBridgeImproved(Node):
                 # Use simple environment with complex LIDAR simulation
                 self.get_logger().info("Starting simple simulation environment with complex LIDAR...")
                 self.sim = StretchMujocoSimulator(cameras_to_use=cameras_to_use)
-                self.sim.start(headless=False)
+                self.sim.start(headless=headless)
                 self.is_running = True
                 time.sleep(2)
                 self.sim.home()
@@ -124,18 +140,41 @@ class StretchSLAMBridgeImproved(Node):
                 
                 # Load the complex office scene with robot (based on the default scene.xml)
                 scene_xml_path = "/home/user/stretch_mujoco/stretch_mujoco/models/complex_office_scene.xml"
-                self.sim = StretchMujocoSimulator(scene_xml_path=scene_xml_path, cameras_to_use=cameras_to_use)
-                self.sim.start(headless=False)
-                self.is_running = True
-                self._environment_type = "complex_office_real"  # Use real environment, not simulation
-                time.sleep(5)  # Give more time for complex scene to load
+                self.get_logger().info(f"Loading scene from: {scene_xml_path}")
                 
-                # Home the robot
-                self.sim.home()
-                self.get_logger().info("Complex office environment started successfully!")
-                self.get_logger().info("✓ MuJoCo: Complex 25m×20m office building visible")
-                self.get_logger().info("✓ Robot: Real Stretch robot with cameras and LIDAR")
-                self.get_logger().info("✓ SLAM: Will map the actual visible environment")
+                try:
+                    self.sim = StretchMujocoSimulator(scene_xml_path=scene_xml_path, cameras_to_use=cameras_to_use)
+                    self.get_logger().info("MuJoCo simulator created successfully")
+                    
+                    self.sim.start(headless=headless)
+                    self.get_logger().info("MuJoCo simulator started successfully")
+                    
+                    self.is_running = True
+                    self._environment_type = "complex_office_real"  # Use real environment, not simulation
+                    time.sleep(5)  # Give more time for complex scene to load
+                    
+                    # Home the robot
+                    self.sim.home()
+                    self.get_logger().info("Robot homed successfully")
+                    self.get_logger().info("Complex office environment started successfully!")
+                    self.get_logger().info("✓ MuJoCo: Complex 25m×20m office building visible")
+                    self.get_logger().info("✓ Robot: Real Stretch robot with cameras and LIDAR")
+                    self.get_logger().info("✓ SLAM: Will map the actual visible environment")
+                    
+                except Exception as sim_error:
+                    self.get_logger().error(f"Failed to start complex office simulation: {sim_error}")
+                    self.get_logger().error("Falling back to simple environment...")
+                    try:
+                        self.sim = StretchMujocoSimulator(cameras_to_use=cameras_to_use)
+                        self.sim.start(headless=headless)
+                        self.is_running = True
+                        time.sleep(2)
+                        self.sim.home()
+                        self.get_logger().info("Fallback to simple environment successful")
+                    except Exception as fallback_error:
+                        self.get_logger().error(f"Fallback also failed: {fallback_error}")
+                        self.is_running = False
+                        return
                 self.get_logger().info("Environment includes: offices, labs, conference room, corridors, furniture")
                 return
             elif environment == "demo_complex":
@@ -146,7 +185,7 @@ class StretchSLAMBridgeImproved(Node):
                 # Load the demo complex scene
                 scene_xml_path = "/home/user/stretch_mujoco/stretch_mujoco/models/demo_complex_scene.xml"
                 self.sim = StretchMujocoSimulator(scene_xml_path=scene_xml_path, cameras_to_use=cameras_to_use)
-                self.sim.start(headless=False)
+                self.sim.start(headless=headless)
                 self.is_running = True
                 self._environment_type = "demo_complex_real"
                 time.sleep(3)
@@ -174,7 +213,7 @@ class StretchSLAMBridgeImproved(Node):
                 # Load the simple office scene with robot
                 scene_xml_path = "/home/user/stretch_mujoco/stretch_mujoco/models/simple_office_scene.xml"
                 self.sim = StretchMujocoSimulator(scene_xml_path=scene_xml_path, cameras_to_use=cameras_to_use)
-                self.sim.start(headless=False)
+                self.sim.start(headless=headless)
                 self.is_running = True
                 self._environment_type = "office_real"
                 time.sleep(3)
@@ -202,7 +241,7 @@ class StretchSLAMBridgeImproved(Node):
                 # Load the kitchen scene with robot
                 scene_xml_path = "/home/user/stretch_mujoco/stretch_mujoco/models/kitchen_scene.xml"
                 self.sim = StretchMujocoSimulator(scene_xml_path=scene_xml_path, cameras_to_use=cameras_to_use)
-                self.sim.start(headless=False)
+                self.sim.start(headless=headless)
                 self.is_running = True
                 self._environment_type = "kitchen_real"  # Use real kitchen environment
                 time.sleep(3)
@@ -243,7 +282,7 @@ class StretchSLAMBridgeImproved(Node):
                 
                 # Initialize simulator with RoboCasa kitchen model
                 self.sim = StretchMujocoSimulator(model=model, cameras_to_use=cameras_to_use)
-                self.sim.start(headless=False)
+                self.sim.start(headless=headless)
                 self.is_running = True
                 time.sleep(3)
                 
@@ -286,7 +325,7 @@ class StretchSLAMBridgeImproved(Node):
             self.sim = StretchMujocoSimulator(model=model, cameras_to_use=cameras_to_use)
             
             # Start simulation
-            self.sim.start(headless=False)
+            self.sim.start(headless=headless)
             self.is_running = True
             
             self.get_logger().info(f"RoboCasa kitchen environment started successfully!")
@@ -320,7 +359,7 @@ class StretchSLAMBridgeImproved(Node):
             try:
                 cameras_to_use = StretchCameras.rgb()
                 self.sim = StretchMujocoSimulator(cameras_to_use=cameras_to_use)
-                self.sim.start(headless=False)
+                self.sim.start(headless=headless)
                 self.is_running = True
                 time.sleep(2)
                 self.sim.home()
@@ -371,12 +410,17 @@ class StretchSLAMBridgeImproved(Node):
                 elif self._environment_type == "demo_complex_real":
                     # For demo complex environment, use detailed LIDAR simulation
                     try:
+                        # Extract robot position from status
+                        robot_x = status.base.x
+                        robot_y = status.base.y
+                        robot_theta = status.base.theta
+                        
                         ranges = []
                         num_readings = int((self.lidar_angle_max - self.lidar_angle_min) / self.lidar_angle_increment)
                         
                         for i in range(num_readings):
                             angle = self.lidar_angle_min + i * self.lidar_angle_increment
-                            # Use complex office simulation as fallback
+                            # Use complex office simulation  
                             range_val = self.simulate_complex_office_range(angle, robot_x, robot_y, robot_theta)
                             ranges.append(range_val)
                         
@@ -387,6 +431,11 @@ class StretchSLAMBridgeImproved(Node):
                 elif self._environment_type == "office_real":
                     # For simple office environment, use office-specific LIDAR simulation
                     try:
+                        # Extract robot position from status
+                        robot_x = status.base.x
+                        robot_y = status.base.y
+                        robot_theta = status.base.theta
+                        
                         ranges = []
                         num_readings = int((self.lidar_angle_max - self.lidar_angle_min) / self.lidar_angle_increment)
                         
@@ -894,10 +943,24 @@ class StretchSLAMBridgeImproved(Node):
     
     def cmd_vel_callback(self, msg):
         """Enhanced velocity command handling"""
+        linear_x = msg.linear.x
+        angular_z = msg.angular.z
+        
+        # Always log commands for debugging
+        if abs(linear_x) > 0.001 or abs(angular_z) > 0.001:
+            self.get_logger().info(f"🔵 MuJoCo received cmd_vel: v={linear_x:.3f}, w={angular_z:.3f}")
+            
+        # Check simulation state
+        if not self.sim:
+            self.get_logger().error("🚫 No simulator instance available")
+            return
+            
+        if not self.is_running:
+            self.get_logger().error("🚫 Simulator is not running (is_running=False)")
+            return
+            
         if self.sim and self.is_running:
             try:
-                linear_x = msg.linear.x
-                angular_z = msg.angular.z
                 
                 # Apply velocity limits for safety
                 max_linear = 0.5  # m/s
@@ -906,18 +969,94 @@ class StretchSLAMBridgeImproved(Node):
                 linear_x = max(-max_linear, min(max_linear, linear_x))
                 angular_z = max(-max_angular, min(max_angular, angular_z))
                 
-                self.sim.set_base_velocity(linear_x, angular_z)
+                # Send command to MuJoCo
+                result = self.sim.set_base_velocity(linear_x, angular_z)
                 
-                # Log periodically
-                if hasattr(self, '_last_cmd_log_time'):
-                    if time.time() - self._last_cmd_log_time > 5.0:
-                        self.get_logger().info(f"Navigation: v={linear_x:.2f} w={angular_z:.2f}")
-                        self._last_cmd_log_time = time.time()
-                else:
-                    self._last_cmd_log_time = time.time()
+                # Check if command was successful
+                if abs(linear_x) > 0.001 or abs(angular_z) > 0.001:
+                    self.get_logger().info(f"🤖 MuJoCo command sent: v={linear_x:.3f}, w={angular_z:.3f}")
+                    
+                    # Get robot status to check if it actually moved
+                    try:
+                        status = self.sim.pull_status()
+                        self.get_logger().info(f"📍 Robot position: x={status.base.x:.3f}, y={status.base.y:.3f}, θ={status.base.theta:.3f}")
+                    except Exception as status_e:
+                        self.get_logger().warning(f"Could not get robot status: {status_e}")
                     
             except Exception as e:
                 self.get_logger().error(f"Error processing cmd_vel: {e}")
+        else:
+            self.get_logger().warning(f"⚠️  MuJoCo not running - ignoring cmd_vel: v={msg.linear.x:.3f}, w={msg.angular.z:.3f}")
+    
+    def lift_cmd_callback(self, msg):
+        """Handle lift joint command"""
+        if self.sim and self.is_running:
+            try:
+                value = max(0.0, min(1.1, msg.data))  # Clamp to safe limits
+                self.get_logger().info(f"🏗️ MuJoCo lift command: {value:.3f}m")
+                self.sim.move_to(Actuators.lift, value)
+            except Exception as e:
+                self.get_logger().error(f"Error controlling lift: {e}")
+    
+    def arm_cmd_callback(self, msg):
+        """Handle arm extension command"""
+        if self.sim and self.is_running:
+            try:
+                value = max(0.0, min(0.5, msg.data))  # Clamp to safe limits
+                self.get_logger().info(f"🦾 MuJoCo arm command: {value:.3f}m")
+                self.sim.move_to(Actuators.arm, value)
+            except Exception as e:
+                self.get_logger().error(f"Error controlling arm: {e}")
+    
+    def wrist_yaw_cmd_callback(self, msg):
+        """Handle wrist yaw command"""
+        if self.sim and self.is_running:
+            try:
+                value = max(-1.57, min(1.57, msg.data))  # Clamp to safe limits
+                self.get_logger().info(f"🔄 MuJoCo wrist yaw command: {value:.3f}rad")
+                self.sim.move_to(Actuators.wrist_yaw, value)
+            except Exception as e:
+                self.get_logger().error(f"Error controlling wrist yaw: {e}")
+    
+    def wrist_pitch_cmd_callback(self, msg):
+        """Handle wrist pitch command"""
+        if self.sim and self.is_running:
+            try:
+                value = max(-0.5, min(0.5, msg.data))  # Clamp to safe limits
+                self.get_logger().info(f"↕️ MuJoCo wrist pitch command: {value:.3f}rad")
+                self.sim.move_to(Actuators.wrist_pitch, value)
+            except Exception as e:
+                self.get_logger().error(f"Error controlling wrist pitch: {e}")
+    
+    def gripper_cmd_callback(self, msg):
+        """Handle gripper command"""
+        if self.sim and self.is_running:
+            try:
+                value = max(-0.1, min(0.6, msg.data))  # Clamp to safe limits
+                self.get_logger().info(f"✋ MuJoCo gripper command: {value:.3f}m")
+                self.sim.move_to(Actuators.gripper, value)
+            except Exception as e:
+                self.get_logger().error(f"Error controlling gripper: {e}")
+                
+    def head_pan_cmd_callback(self, msg):
+        """Handle head pan command"""
+        if self.sim and self.is_running:
+            try:
+                value = max(-1.57, min(1.57, msg.data))  # Clamp to safe limits
+                self.get_logger().info(f"🔄 MuJoCo head pan command: {value:.3f}rad")
+                self.sim.move_to(Actuators.head_pan, value)
+            except Exception as e:
+                self.get_logger().error(f"Error controlling head pan: {e}")
+                
+    def head_tilt_cmd_callback(self, msg):
+        """Handle head tilt command"""
+        if self.sim and self.is_running:
+            try:
+                value = max(-0.52, min(0.52, msg.data))  # Clamp to safe limits
+                self.get_logger().info(f"🔄 MuJoCo head tilt command: {value:.3f}rad")
+                self.sim.move_to(Actuators.head_tilt, value)
+            except Exception as e:
+                self.get_logger().error(f"Error controlling head tilt: {e}")
     
     def publish_joint_states(self):
         """Publish joint states with proper naming"""
@@ -1198,6 +1337,10 @@ def main():
                         help='Use visible kitchen world with cabinets and appliances')
     parser.add_argument('--complex-office', action='store_true',
                         help='Use complex office environment with visible robot and realistic LIDAR')
+    parser.add_argument('--environment', type=str, default='',
+                        help='Environment type: demo_complex, kitchen_scene, simple_office, complex_office')
+    parser.add_argument('--headless', action='store_true',
+                        help='Run simulation in headless mode (no display)')
     
     # Parse known args to allow ROS2 args to pass through
     args, unknown = parser.parse_known_args()
@@ -1210,18 +1353,31 @@ def main():
     bridge = StretchSLAMBridgeImproved()
     
     try:
-        if args.simple:
+        # Check for environment parameter first
+        if args.environment:
+            if args.environment == "demo_complex":
+                bridge.start_simulation(environment="demo_complex", headless=args.headless)
+            elif args.environment == "kitchen_scene":
+                bridge.start_simulation(environment="kitchen", layout=args.layout, style=args.style, headless=args.headless)
+            elif args.environment == "simple_office":
+                bridge.start_simulation(environment="simple_office", headless=args.headless)
+            elif args.environment == "complex_office":
+                bridge.start_simulation(environment="complex_office", headless=args.headless)
+            else:
+                bridge.get_logger().warn(f"Unknown environment: {args.environment}, using demo_complex")
+                bridge.start_simulation(environment="demo_complex", headless=args.headless)
+        elif args.simple:
             # Use simple environment
-            bridge.start_simulation(environment="simple")
+            bridge.start_simulation(environment="simple", headless=args.headless)
         elif args.kitchen_world:
             # Use complex demo environment (visible in both MuJoCo and RViz)
-            bridge.start_simulation(environment="demo_complex")
+            bridge.start_simulation(environment="demo_complex", headless=args.headless)
         elif args.complex_office:
             # Use complex office environment
-            bridge.start_simulation(environment="complex_office")
+            bridge.start_simulation(environment="complex_office", headless=args.headless)
         else:
-            # Use RoboCasa kitchen environment
-            bridge.start_simulation(environment="kitchen", layout=args.layout, style=args.style)
+            # Default to demo complex environment
+            bridge.start_simulation(environment="demo_complex", headless=args.headless)
         
         bridge.get_logger().info("Enhanced SLAM Bridge ready!")
         bridge.get_logger().info("Topics available:")
