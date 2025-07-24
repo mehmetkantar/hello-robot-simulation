@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Improved Stretch SLAM Bridge with Real MuJoCo Lidar Integration
+RViz-Only Stretch SLAM Bridge - Headless MuJoCo with Web Control
 
-This enhanced version integrates with actual MuJoCo lidar sensor data
-for more realistic SLAM performance.
+This version runs MuJoCo in headless mode for maximum performance,
+only showing visualization in RViz with web-based robot control.
 """
 
 import sys
@@ -44,20 +44,20 @@ except ImportError as e:
     print(f"✗ stretch_mujoco not available: {e}")
     STRETCH_MUJOCO_AVAILABLE = False
 
-class StretchSLAMBridgeImproved(Node):
+class StretchRVizOnlyBridge(Node):
     """
     Enhanced SLAM Bridge with real MuJoCo lidar integration
     """
     
     def __init__(self):
-        super().__init__('stretch_slam_bridge_improved')
+        super().__init__('stretch_rviz_only_bridge')
         
         # Initialize simulation
         self.sim = None
         self.bridge = CvBridge()
         self.is_running = False
         self.tf_broadcaster = TransformBroadcaster(self)
-        self.cameras_enabled = True
+        self.cameras_enabled = False  # Disabled by default for maximum performance
         
         # Subscriber to enable/disable cameras
         self.camera_toggle_sub = self.create_subscription(
@@ -130,7 +130,7 @@ class StretchSLAMBridgeImproved(Node):
         # Performance monitoring timer
         self.performance_timer = self.create_timer(5.0, self.log_performance)     # Every 5 seconds
         
-        self.get_logger().info("Enhanced Stretch SLAM Bridge initialized")
+        self.get_logger().info("RViz-Only Stretch SLAM Bridge initialized (Headless MuJoCo + Web Control)")
     
     def start_simulation(self, environment="kitchen", layout=2, style=1, headless=False):
         """Start simulation with specific environment"""
@@ -142,7 +142,7 @@ class StretchSLAMBridgeImproved(Node):
                 # Use simple environment with complex LIDAR simulation
                 self.get_logger().info("Starting simple simulation environment with complex LIDAR...")
                 self.sim = StretchMujocoSimulator(cameras_to_use=cameras_to_use)
-                self.sim.start(headless=headless)
+                self.sim.start(headless=True)  # Force headless for RViz-only mode
                 self.is_running = True
                 time.sleep(2)
                 self.sim.home()
@@ -161,7 +161,7 @@ class StretchSLAMBridgeImproved(Node):
                     self.sim = StretchMujocoSimulator(scene_xml_path=scene_xml_path, cameras_to_use=cameras_to_use)
                     self.get_logger().info("MuJoCo simulator created successfully")
                     
-                    self.sim.start(headless=headless)
+                    self.sim.start(headless=True)  # Force headless for RViz-only mode
                     self.get_logger().info("MuJoCo simulator started successfully")
                     
                     self.is_running = True
@@ -181,7 +181,7 @@ class StretchSLAMBridgeImproved(Node):
                     self.get_logger().error("Falling back to simple environment...")
                     try:
                         self.sim = StretchMujocoSimulator(cameras_to_use=cameras_to_use)
-                        self.sim.start(headless=headless)
+                        self.sim.start(headless=True)  # Force headless for RViz-only mode
                         self.is_running = True
                         time.sleep(2)
                         self.sim.home()
@@ -200,7 +200,7 @@ class StretchSLAMBridgeImproved(Node):
                 # Load the demo complex scene
                 scene_xml_path = "/home/user/stretch_mujoco/stretch_mujoco/models/demo_complex_scene.xml"
                 self.sim = StretchMujocoSimulator(scene_xml_path=scene_xml_path, cameras_to_use=cameras_to_use)
-                self.sim.start(headless=headless)
+                self.sim.start(headless=True)  # Force headless for RViz-only mode
                 self.is_running = True
                 self._environment_type = "demo_complex_real"
                 time.sleep(3)
@@ -228,7 +228,7 @@ class StretchSLAMBridgeImproved(Node):
                 # Load the simple office scene with robot
                 scene_xml_path = "/home/user/stretch_mujoco/stretch_mujoco/models/simple_office_scene.xml"
                 self.sim = StretchMujocoSimulator(scene_xml_path=scene_xml_path, cameras_to_use=cameras_to_use)
-                self.sim.start(headless=headless)
+                self.sim.start(headless=True)  # Force headless for RViz-only mode
                 self.is_running = True
                 self._environment_type = "office_real"
                 time.sleep(3)
@@ -256,7 +256,7 @@ class StretchSLAMBridgeImproved(Node):
                 # Load the kitchen scene with robot
                 scene_xml_path = "/home/user/stretch_mujoco/stretch_mujoco/models/kitchen_scene.xml"
                 self.sim = StretchMujocoSimulator(scene_xml_path=scene_xml_path, cameras_to_use=cameras_to_use)
-                self.sim.start(headless=headless)
+                self.sim.start(headless=True)  # Force headless for RViz-only mode
                 self.is_running = True
                 self._environment_type = "kitchen_real"  # Use real kitchen environment
                 time.sleep(3)
@@ -297,7 +297,7 @@ class StretchSLAMBridgeImproved(Node):
                 
                 # Initialize simulator with RoboCasa kitchen model
                 self.sim = StretchMujocoSimulator(model=model, cameras_to_use=cameras_to_use)
-                self.sim.start(headless=headless)
+                self.sim.start(headless=True)  # Force headless for RViz-only mode
                 self.is_running = True
                 time.sleep(3)
                 
@@ -340,7 +340,7 @@ class StretchSLAMBridgeImproved(Node):
             self.sim = StretchMujocoSimulator(model=model, cameras_to_use=cameras_to_use)
             
             # Start simulation
-            self.sim.start(headless=headless)
+            self.sim.start(headless=True)  # Force headless for RViz-only mode
             self.is_running = True
             
             self.get_logger().info(f"RoboCasa kitchen environment started successfully!")
@@ -374,7 +374,7 @@ class StretchSLAMBridgeImproved(Node):
             try:
                 cameras_to_use = StretchCameras.rgb()
                 self.sim = StretchMujocoSimulator(cameras_to_use=cameras_to_use)
-                self.sim.start(headless=headless)
+                self.sim.start(headless=True)  # Force headless for RViz-only mode
                 self.is_running = True
                 time.sleep(2)
                 self.sim.home()
@@ -1399,7 +1399,7 @@ def main():
     
     rclpy.init()
     
-    bridge = StretchSLAMBridgeImproved()
+    bridge = StretchRVizOnlyBridge()
     
     try:
         # Check for environment parameter first

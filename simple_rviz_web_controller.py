@@ -14,9 +14,9 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 import urllib.parse
 
-class SimpleWebController(Node):
+class SimpleRVizWebController(Node):
     def __init__(self):
-        super().__init__('simple_web_controller')
+        super().__init__('simple_rviz_web_controller')
         self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
         
         # Publishers for arm/lift control - matching SLAM bridge topic names
@@ -97,7 +97,7 @@ class WebHandler(BaseHTTPRequestHandler):
             <!DOCTYPE html>
             <html>
             <head>
-                <title>Stretch Robot Controller</title>
+                <title>Stretch Robot RViz-Only Controller</title>
                 <style>
                     body { font-family: Arial, sans-serif; text-align: center; background: #f0f0f0; }
                     .container { max-width: 600px; margin: 20px auto; padding: 20px; background: white; border-radius: 10px; }
@@ -122,10 +122,11 @@ class WebHandler(BaseHTTPRequestHandler):
             </head>
             <body>
                 <div class="container">
-                    <h1>🤖 Stretch Robot Controller</h1>
+                    <h1>🖥️ Stretch Robot RViz-Only Controller</h1>
                     <div class="status">
-                        <p><strong>Status:</strong> Connected to SLAM System</p>
-                        <p><strong>Control:</strong> Click buttons to move robot base and manipulator</p>
+                        <p><strong>Status:</strong> Connected to RViz-Only SLAM System (No MuJoCo GUI)</p>
+                        <p><strong>Control:</strong> Web control + RViz visualization only</p>
+                        <p><strong>Performance:</strong> Maximum speed - no visual GUI overhead</p>
                     </div>
                     
                     <div class="speed-control">
@@ -425,7 +426,7 @@ def main():
     rclpy.init()
     
     # Create ROS2 node
-    controller = SimpleWebController()
+    controller = SimpleRVizWebController()
     
     # Start ROS2 spinning in separate thread
     def spin_ros():
@@ -438,9 +439,10 @@ def main():
     server = HTTPServer(('localhost', 8081), WebHandler)
     server.controller = controller
     
-    print("🌐 Starting Simple Web Controller...")
+    print("🌐 Starting RViz-Only Web Controller...")
     print("📱 Open your web browser and go to: http://localhost:8081")
-    print("🎮 Use the web interface to control your robot!")
+    print("🖥️ Robot visualization available in RViz only - no MuJoCo GUI!")
+    print("🚀 Maximum performance mode enabled")
     print("🛑 Press Ctrl+C to stop")
     
     try:
