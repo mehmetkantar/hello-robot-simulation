@@ -1,0 +1,188 @@
+<mujoco model="complex office with hybrid stretch robot">
+  <!-- Include hybrid robot with simplified base -->
+  <include file="stretch_hybrid_simple.xml"/>
+
+  <statistic center="0 0 .75" extent="12" meansize="0.05"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-120" elevation="-20"/>
+  </visual>
+
+  <asset>
+    <!-- Office environment materials -->
+    <material name="office_floor" rgba=".85 0.85 0.9 1" reflectance="0.2"/>
+    <material name="office_wall" rgba=".92 0.92 0.88 1" reflectance="0.1"/>
+    <material name="wood_desk" rgba=".6 0.4 0.2 1" reflectance="0.1"/>
+    <material name="metal_chair" rgba=".7 0.7 0.8 1" reflectance="0.3"/>
+    <material name="carpet" rgba=".4 0.6 0.8 0.5" reflectance="0.0"/>
+    <material name="bookshelf" rgba=".3 0.2 0.1 1" reflectance="0.05"/>
+    <material name="computer" rgba=".1 0.1 0.1 1" reflectance="0.05"/>
+    <material name="plant" rgba=".2 0.6 0.2 1" reflectance="0.0"/>
+    <texture type="skybox" builtin="gradient" rgb1="0.44 0.80 1.00" rgb2="1 1 1" width="512" height="3072"/>
+  </asset>
+
+  <worldbody>
+    <!-- Enhanced lighting for office environment -->
+    <light pos="0 0 4" dir="0 0 -1" directional="true" diffuse="0.8 0.8 0.8"/>
+    <light pos="4 4 3" dir="-1 -1 -1" diffuse="0.4 0.4 0.5"/>
+    <light pos="-4 -4 3" dir="1 1 -1" diffuse="0.4 0.4 0.5"/>
+    <light pos="2 -3 2.5" dir="0 1 -1" diffuse="0.3 0.3 0.4"/>
+    
+    <!-- Large office floor -->
+    <geom name="office_floor" size="8 6 0.05" type="plane" material="office_floor"/>
+    
+    <!-- Office walls creating realistic environment -->
+    <geom name="wall_north" type="box" size="8 0.15 2.5" pos="0 5.85 2.5" material="office_wall"/>
+    <geom name="wall_south" type="box" size="8 0.15 2.5" pos="0 -5.85 2.5" material="office_wall"/>
+    <geom name="wall_east" type="box" size="0.15 6 2.5" pos="7.85 0 2.5" material="office_wall"/>
+    <geom name="wall_west" type="box" size="0.15 6 2.5" pos="-7.85 0 2.5" material="office_wall"/>
+    
+    <!-- Room divider (creates realistic office layout) -->
+    <geom name="divider_wall" type="box" size="0.1 3 1.5" pos="2 1 1.5" material="office_wall"/>
+    
+    <!-- Office furniture - strategically placed for navigation testing -->
+    
+    <!-- Reception area (front of office) -->
+    <body name="reception_desk" pos="0 4 0.4">
+      <geom type="box" size="2.0 0.8 0.4" material="wood_desk"/>
+      <geom name="desk_leg1" type="cylinder" size="0.05 0.4" pos="1.5 0.5 -0.4" material="metal_chair"/>
+      <geom name="desk_leg2" type="cylinder" size="0.05 0.4" pos="1.5 -0.5 -0.4" material="metal_chair"/>
+      <geom name="desk_leg3" type="cylinder" size="0.05 0.4" pos="-1.5 0.5 -0.4" material="metal_chair"/>
+      <geom name="desk_leg4" type="cylinder" size="0.05 0.4" pos="-1.5 -0.5 -0.4" material="metal_chair"/>
+    </body>
+    
+    <body name="reception_chair" pos="0 3 0.25">
+      <geom type="box" size="0.4 0.4 0.05" material="metal_chair"/>
+      <geom name="chair_back" type="box" size="0.35 0.05 0.4" pos="0 0.3 0.4" material="metal_chair"/>
+      <geom name="chair_leg1" type="cylinder" size="0.02 0.25" pos="0.3 0.3 -0.25" material="metal_chair"/>
+      <geom name="chair_leg2" type="cylinder" size="0.02 0.25" pos="0.3 -0.3 -0.25" material="metal_chair"/>
+      <geom name="chair_leg3" type="cylinder" size="0.02 0.25" pos="-0.3 0.3 -0.25" material="metal_chair"/>
+      <geom name="chair_leg4" type="cylinder" size="0.02 0.25" pos="-0.3 -0.3 -0.25" material="metal_chair"/>
+    </body>
+    
+    <!-- Work area 1 (left side) -->
+    <body name="work_desk1" pos="-5 3 0.4">
+      <geom type="box" size="1.5 0.8 0.4" material="wood_desk"/>
+      <!-- Computer setup -->
+      <geom name="monitor1" type="box" size="0.3 0.05 0.2" pos="0 0.5 0.6" material="computer"/>
+      <geom name="keyboard1" type="box" size="0.2 0.1 0.01" pos="0 0.2 0.42" material="computer"/>
+    </body>
+    
+    <body name="work_chair1" pos="-5 2 0.45">
+      <geom type="cylinder" size="0.3 0.45" material="metal_chair"/>
+      <geom name="chair1_back" type="cylinder" size="0.25 0.05" pos="0 0.2 0.4" material="metal_chair"/>
+    </body>
+    
+    <!-- Work area 2 (right side) -->
+    <body name="work_desk2" pos="5 3 0.4">
+      <geom type="box" size="1.5 0.8 0.4" material="wood_desk"/>
+      <!-- Computer setup -->
+      <geom name="monitor2" type="box" size="0.3 0.05 0.2" pos="0 0.5 0.6" material="computer"/>
+      <geom name="keyboard2" type="box" size="0.2 0.1 0.01" pos="0 0.2 0.42" material="computer"/>
+    </body>
+    
+    <body name="work_chair2" pos="5 1.8 0.45">
+      <geom type="cylinder" size="0.3 0.45" material="metal_chair"/>
+      <geom name="chair2_back" type="cylinder" size="0.25 0.05" pos="0 0.2 0.4" material="metal_chair"/>
+    </body>
+    
+    <!-- Meeting table (center-back) -->
+    <body name="meeting_table" pos="0 -2 0.4">
+      <geom type="cylinder" size="1.2 0.4" material="wood_desk"/>
+      <geom name="table_base" type="cylinder" size="0.1 0.4" pos="0 0 -0.4" material="metal_chair"/>
+    </body>
+    
+    <!-- Meeting chairs around table -->
+    <body name="meeting_chair1" pos="0.8 -1.2 0.45">
+      <geom type="cylinder" size="0.25 0.45" material="metal_chair"/>
+    </body>
+    <body name="meeting_chair2" pos="-0.8 -1.2 0.45">
+      <geom type="cylinder" size="0.25 0.45" material="metal_chair"/>
+    </body>
+    <body name="meeting_chair3" pos="0.8 -2.8 0.45">
+      <geom type="cylinder" size="0.25 0.45" material="metal_chair"/>
+    </body>
+    <body name="meeting_chair4" pos="-0.8 -2.8 0.45">
+      <geom type="cylinder" size="0.25 0.45" material="metal_chair"/>
+    </body>
+    
+    <!-- Bookshelves along walls -->
+    <body name="bookshelf1" pos="-7.5 -3 1.0">
+      <geom type="box" size="0.25 2.0 1.0" material="bookshelf"/>
+      <!-- Books simulation -->
+      <geom name="books1" type="box" size="0.2 1.8 0.05" pos="0 0 0.5" material="computer"/>
+      <geom name="books2" type="box" size="0.2 1.8 0.05" pos="0 0 0.0" material="computer"/>
+      <geom name="books3" type="box" size="0.2 1.8 0.05" pos="0 0 -0.5" material="computer"/>
+    </body>
+    
+    <body name="bookshelf2" pos="7.5 -3 1.0">
+      <geom type="box" size="0.25 2.0 1.0" material="bookshelf"/>
+      <geom name="books4" type="box" size="0.2 1.8 0.05" pos="0 0 0.5" material="computer"/>
+      <geom name="books5" type="box" size="0.2 1.8 0.05" pos="0 0 0.0" material="computer"/>
+      <geom name="books6" type="box" size="0.2 1.8 0.05" pos="0 0 -0.5" material="computer"/>
+    </body>
+    
+    <!-- Filing cabinets -->
+    <body name="filing_cabinet1" pos="-6 -5 0.6">
+      <geom type="box" size="0.3 0.4 0.6" material="metal_chair"/>
+      <!-- Drawer handles -->
+      <geom name="handle1" type="cylinder" size="0.01 0.05" pos="0.28 0 0.3" euler="0 1.57 0" material="computer"/>
+      <geom name="handle2" type="cylinder" size="0.01 0.05" pos="0.28 0 0" euler="0 1.57 0" material="computer"/>
+      <geom name="handle3" type="cylinder" size="0.01 0.05" pos="0.28 0 -0.3" euler="0 1.57 0" material="computer"/>
+    </body>
+    
+    <body name="filing_cabinet2" pos="6 -5 0.6">
+      <geom type="box" size="0.3 0.4 0.6" material="metal_chair"/>
+      <geom name="handle4" type="cylinder" size="0.01 0.05" pos="0.28 0 0.3" euler="0 1.57 0" material="computer"/>
+      <geom name="handle5" type="cylinder" size="0.01 0.05" pos="0.28 0 0" euler="0 1.57 0" material="computer"/>
+      <geom name="handle6" type="cylinder" size="0.01 0.05" pos="0.28 0 -0.3" euler="0 1.57 0" material="computer"/>
+    </body>
+    
+    <!-- Plants for realism -->
+    <body name="plant1" pos="-3 5 0.4">
+      <geom type="cylinder" size="0.15 0.4" material="plant"/>
+      <geom name="pot1" type="cylinder" size="0.2 0.15" pos="0 0 -0.25" material="computer"/>
+    </body>
+    
+    <body name="plant2" pos="3 -5 0.4">
+      <geom type="cylinder" size="0.15 0.4" material="plant"/>
+      <geom name="pot2" type="cylinder" size="0.2 0.15" pos="0 0 -0.25" material="computer"/>
+    </body>
+    
+    <!-- Office equipment -->
+    <body name="printer" pos="6.5 0 0.3">
+      <geom type="box" size="0.3 0.4 0.3" material="computer"/>
+      <geom name="printer_tray" type="box" size="0.25 0.35 0.02" pos="0 0.35 0" material="office_wall"/>
+    </body>
+    
+    <!-- Water cooler -->
+    <body name="water_cooler" pos="-6.5 1 0.6">
+      <geom type="cylinder" size="0.2 0.6" material="metal_chair"/>
+      <geom name="water_bottle" type="cylinder" size="0.15 0.3" pos="0 0 0.8" material="carpet"/>
+    </body>
+    
+    <!-- Trash bins -->
+    <body name="trash1" pos="1 4.5 0.2">
+      <geom type="cylinder" size="0.15 0.2" material="computer"/>
+    </body>
+    <body name="trash2" pos="-2 -4.5 0.2">
+      <geom type="cylinder" size="0.15 0.2" material="computer"/>
+    </body>
+    
+    <!-- Area rug for visual reference -->
+    <geom name="office_rug" type="cylinder" size="1.5 0.01" pos="0 -2 0.01" material="carpet"/>
+    
+    <!-- Robot starting area marker (clear navigation space) -->
+    <body name="robot_start_zone" pos="0 0 0.01">
+      <geom type="cylinder" size="1.2 0.005" rgba="0 0.8 0 0.3"/>
+    </body>
+    
+    <!-- Navigation waypoints (invisible markers for testing) -->
+    <site name="waypoint_1" pos="3 2 0.1" size="0.05" rgba="1 0 0 0.5"/>
+    <site name="waypoint_2" pos="-3 2 0.1" size="0.05" rgba="1 0 0 0.5"/>
+    <site name="waypoint_3" pos="0 -3.5 0.1" size="0.05" rgba="1 0 0 0.5"/>
+    <site name="waypoint_4" pos="4 -2 0.1" size="0.05" rgba="1 0 0 0.5"/>
+  </worldbody>
+</mujoco>

@@ -1,0 +1,68 @@
+<mujoco model="simple_fast_robot">
+  <!-- Ultra-fast physics settings -->
+  <option timestep="0.02" gravity="0 0 -9.81" iterations="10" solver="PGS"/>
+  
+  <statistic center="0 0 0.5" extent="5" meansize="0.1"/>
+  
+  <visual>
+    <headlight diffuse="0.8 0.8 0.8" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-120" elevation="-20"/>
+  </visual>
+
+  <asset>
+    <material name="robot_mat" rgba="0.2 0.6 0.8 1" reflectance="0.1"/>
+    <material name="floor_mat" rgba="0.9 0.9 0.9 1" reflectance="0.2"/>
+    <material name="wall_mat" rgba="0.8 0.8 0.8 1" reflectance="0.1"/>
+  </asset>
+  
+  <worldbody>
+    <!-- Simple environment -->
+    <light name="main_light" pos="0 0 3" dir="0 0 -1" diffuse="1 1 1"/>
+    <geom name="floor" type="plane" size="10 10 0.1" material="floor_mat" pos="0 0 0"/>
+    
+    <!-- Simple walls -->
+    <geom name="wall_n" type="box" size="10 0.1 1" pos="0 9.9 1" material="wall_mat"/>
+    <geom name="wall_s" type="box" size="10 0.1 1" pos="0 -9.9 1" material="wall_mat"/>
+    <geom name="wall_e" type="box" size="0.1 10 1" pos="9.9 0 1" material="wall_mat"/>
+    <geom name="wall_w" type="box" size="0.1 10 1" pos="-9.9 0 1" material="wall_mat"/>
+    
+    <!-- Few simple obstacles -->
+    <geom name="obstacle1" type="box" size="0.5 0.5 0.5" pos="2 2 0.5" material="wall_mat"/>
+    <geom name="obstacle2" type="cylinder" size="0.3 0.8" pos="-2 3 0.4" material="wall_mat"/>
+    <geom name="obstacle3" type="box" size="1 0.2 0.6" pos="3 -2 0.3" material="wall_mat"/>
+    
+    <!-- Simple robot with basic shapes -->
+    <body name="robot" pos="0 0 0.1">
+      <!-- Main base (box) -->
+      <geom name="base" type="box" size="0.25 0.15 0.05" material="robot_mat" mass="2"/>
+      <joint name="base_x" type="slide" axis="1 0 0" range="-10 10"/>
+      <joint name="base_y" type="slide" axis="0 1 0" range="-10 10"/>
+      <joint name="base_rot" type="hinge" axis="0 0 1" range="-3.14 3.14"/>
+      
+      <!-- Simple sensor mast -->
+      <body name="sensor_mast" pos="0 0 0.15">
+        <geom name="mast" type="cylinder" size="0.02 0.1" material="robot_mat" mass="0.1"/>
+        
+        <!-- LIDAR sensor (invisible) -->
+        <body name="lidar" pos="0 0 0.05">
+          <geom name="lidar_housing" type="cylinder" size="0.03 0.02" material="robot_mat" mass="0.05"/>
+        </body>
+      </body>
+      
+      <!-- Simple arm (optional) -->
+      <body name="arm_base" pos="0.1 0 0.05">
+        <joint name="arm_lift" type="slide" axis="0 0 1" range="0 0.3"/>
+        <geom name="arm_segment" type="box" size="0.02 0.02 0.1" material="robot_mat" mass="0.2"/>
+      </body>
+    </body>
+  </worldbody>
+  
+  <!-- Simple actuators -->
+  <actuator>
+    <motor name="base_x_motor" joint="base_x" gear="100" ctrlrange="-1 1"/>
+    <motor name="base_y_motor" joint="base_y" gear="100" ctrlrange="-1 1"/>
+    <motor name="base_rot_motor" joint="base_rot" gear="50" ctrlrange="-1 1"/>
+    <motor name="arm_lift_motor" joint="arm_lift" gear="30" ctrlrange="-1 1"/>
+  </actuator>
+</mujoco>

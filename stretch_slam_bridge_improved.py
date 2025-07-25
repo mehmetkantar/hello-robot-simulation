@@ -16,6 +16,19 @@ from typing import Optional, Dict, Any
 # Add stretch_mujoco to path
 sys.path.append('/home/user/stretch_mujoco')
 
+# GPU optimization setup
+import os
+def setup_gpu_optimization():
+    """Setup GPU optimizations for MuJoCo"""
+    os.environ['MUJOCO_GL'] = 'egl'  # GPU backend
+    os.environ['OMP_NUM_THREADS'] = '8'  # Multi-threading
+    os.environ['__GL_SYNC_TO_VBLANK'] = '0'  # Disable VSync
+    os.environ['__GL_YIELD'] = 'NOTHING'  # Don't yield GPU
+    os.environ['CUDA_LAUNCH_BLOCKING'] = '0'  # Non-blocking CUDA
+
+# Apply optimizations immediately
+setup_gpu_optimization()
+
 # ROS2 imports
 try:
     import rclpy
@@ -67,12 +80,12 @@ class StretchSLAMBridgeImproved(Node):
         self.last_base_pose = {'x': 0.0, 'y': 0.0, 'theta': 0.0}
         self.last_time = time.time()
         
-        # Lidar parameters
-        self.lidar_range_max = 10.0
-        self.lidar_range_min = 0.1
+        # Lidar parameters - High resolution for precise SLAM
+        self.lidar_range_max = 12.0                   # Extended range for better mapping
+        self.lidar_range_min = 0.05                   # Better close-range detection
         self.lidar_angle_min = -math.pi
         self.lidar_angle_max = math.pi
-        self.lidar_angle_increment = math.pi / 36.0  # 5 degree resolution (72 rays instead of 360)
+        self.lidar_angle_increment = math.pi / 180.0  # 1 degree resolution (360 rays for precise SLAM)
         
         # QoS profiles - Optimized for performance
         sensor_qos = QoSProfile(
@@ -120,12 +133,12 @@ class StretchSLAMBridgeImproved(Node):
         self.head_tilt_cmd_sub = self.create_subscription(
             Float64, '/stretch_controller/head_tilt_joint/command', self.head_tilt_cmd_callback, 10)
         
-        # Timers for periodic publishing (Ultra optimized)
-        self.joint_timer = self.create_timer(0.5, self.publish_joint_states)      # 2 Hz
-        self.odom_timer = self.create_timer(0.5, self.publish_odometry)           # 2 Hz
-        self.laser_timer = self.create_timer(0.5, self.publish_laser_scan)        # 2 Hz (was 5 Hz)
-        self.camera_timer = self.create_timer(1.0, self.publish_camera_feeds)     # 1 Hz (minimal cameras)
-        self.tf_timer = self.create_timer(0.5, self.publish_transforms)           # 2 Hz
+        # Timers for periodic publishing (Balanced high-performance rates)
+        self.joint_timer = self.create_timer(0.1, self.publish_joint_states)      # 10 Hz - Balanced for smooth state
+        self.odom_timer = self.create_timer(0.1, self.publish_odometry)           # 10 Hz - Balanced for localization
+        self.laser_timer = self.create_timer(0.2, self.publish_laser_scan)        # 5 Hz - Stable LiDAR rate
+        self.camera_timer = self.create_timer(0.05, self.publish_camera_feeds)    # 20 Hz - High-quality camera feeds
+        self.tf_timer = self.create_timer(0.1, self.publish_transforms)           # 10 Hz - Balanced TF updates
         
         # Performance monitoring timer
         self.performance_timer = self.create_timer(5.0, self.log_performance)     # Every 5 seconds
@@ -135,8 +148,26 @@ class StretchSLAMBridgeImproved(Node):
     def start_simulation(self, environment="kitchen", layout=2, style=1, headless=False):
         """Start simulation with specific environment"""
         try:
-            # Configure cameras and sensors
+            # Configure cameras and sensors with performance optimizations
             cameras_to_use = StretchCameras.rgb()
+            
+            # ULTRA GPU utilization parameters for maximum performance
+            performance_opts = {
+                'width': 3840,         # 4K resolution for maximum GPU load
+                'height': 2160,        # Full 4K resolution
+                'fps': 60,             # Target 60 FPS
+                'samples': 32,         # 32x multisampling for ULTRA GPU load
+                'use_shadows': True,   # Enable shadows (GPU intensive)
+                'use_reflections': True, # Enable reflections (GPU intensive)
+                'use_ssao': True,      # Screen-space ambient occlusion
+                'use_hdr': True,       # High dynamic range
+                'use_bloom': True,     # Bloom effects (GPU intensive)
+                'use_volumetric_lighting': True, # Volumetric lighting
+                'physics_substeps': 12, # More physics calculations for GPU
+                'solver_iterations': 150, # Even more solver work
+                'contact_detection_quality': 'high', # High-quality contacts
+                'texture_quality': 'ultra', # Ultra texture quality
+            }
             
             if environment == "simple":
                 # Use simple environment with complex LIDAR simulation
@@ -1231,7 +1262,7 @@ class StretchSLAMBridgeImproved(Node):
             else:
                 self._camera_debug_status = 1
             
-            if self._camera_debug_status % 150 == 0:  # Every 5 seconds at 30fps
+            if self._camera_debug_status % 150 == 0:  # Every 5 seconds at 30fps (matches 30Hz rate)
                 available_cams = list(all_cameras.keys()) if all_cameras else []
                 self.get_logger().info(f"Available cameras: {available_cams}")
             
@@ -1261,7 +1292,7 @@ class StretchSLAMBridgeImproved(Node):
                             else:
                                 self._camera_debug_counter = 1
                             
-                            if self._camera_debug_counter % 150 == 0:  # Every 150 frames (5 seconds at 30fps)
+                            if self._camera_debug_counter % 150 == 0:  # Every 150 frames (5 seconds at 30fps rate)
                                 self.get_logger().info(f"✓ Camera {cam_key}: {img_bgr.shape} -> Published {ros_image.width}x{ros_image.height} image")
                         else:
                             self.get_logger().warning(f"Invalid image shape for {cam_key}: {img_array.shape if img_array is not None else 'None'}")

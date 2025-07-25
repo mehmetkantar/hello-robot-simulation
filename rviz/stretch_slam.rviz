@@ -275,9 +275,9 @@ Visualization Manager:
       Name: D405 Camera
       Normalize Range: true
       Topic:
-        Depth: 5
+        Depth: 1
         Durability Policy: Volatile
-        Filter size: 10
+        Filter size: 3
         History Policy: Keep Last
         Reliability Policy: Best Effort
         Value: /camera/d405/color/image_raw
@@ -290,9 +290,9 @@ Visualization Manager:
       Name: D435i Camera
       Normalize Range: true
       Topic:
-        Depth: 5
+        Depth: 1
         Durability Policy: Volatile
-        Filter size: 10
+        Filter size: 3
         History Policy: Keep Last
         Reliability Policy: Best Effort
         Value: /camera/d435i/color/image_raw
@@ -305,9 +305,9 @@ Visualization Manager:
       Name: Nav Camera
       Normalize Range: true
       Topic:
-        Depth: 5
+        Depth: 1
         Durability Policy: Volatile
-        Filter size: 10
+        Filter size: 3
         History Policy: Keep Last
         Reliability Policy: Best Effort
         Value: /camera/nav/color/image_raw

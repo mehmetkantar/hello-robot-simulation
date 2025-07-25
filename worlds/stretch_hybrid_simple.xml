@@ -1,0 +1,365 @@
+<mujoco model="stretch_hybrid_simple">
+  <!-- Hybrid model: Simplified cylindrical base + Original upper components -->
+  <compiler angle="radian" assetdir="/home/user/stretch_mujoco/stretch_mujoco/models/assets"/>
+
+  <!-- Optimized physics settings for better performance -->
+  <option timestep="0.015" gravity="0 0 -9.81" iterations="25" solver="PGS" integrator="implicitfast" impratio="15">
+    <flag multiccd="enable"/>
+  </option>
+  <size njmax="3000" nconmax="3000" />
+
+  <default>
+    <default class="stretch">
+      <geom mass="0" solref="0.01 1"/>
+      <general biastype="affine"/>
+      <default class="wheel">
+        <joint axis="0 0 1" damping="0.1" frictionloss="35" armature="0.1" stiffness="0.01"/>
+        <velocity gear="3" kv="20" ctrlrange="-6 6"/>
+      </default>
+      <default class="lift">
+        <joint type="slide" axis="0 0 1" damping="35" stiffness="0.03" armature="0.01" range="0.0 1.1" frictionloss="1.5"/>
+        <general ctrlrange="0.0 1.1" gainprm="400" biasprm="0 -200 -100" forcerange="-70 70"/>
+      </default>
+      <default class="telescope">
+        <joint type="slide" axis="0 0 1" damping="50" stiffness="0.02" armature="0.01" range="0 0.13" frictionloss="1.5"/>
+        <general ctrlrange="0 0.52" gainprm="150" biasprm="0 -100 -10" forcerange="-56 56"/>
+      </default>
+      <default class="head">
+        <joint axis="0 0 1" damping="1"/>
+        <position kp="10"/>
+        <default class="head_pan">
+          <joint range="-4.04 1.73"/>
+          <position ctrlrange="-4.04 1.73"/>
+        </default>
+        <default class="head_tilt">
+          <joint range="-1.53 0.79"/>
+          <position ctrlrange="-1.53 0.79"/>
+        </default>
+      </default>
+      <default class="wrist">
+        <joint axis="0 0 1" damping="1"/>
+        <position kp="10"/>
+        <default class="wrist_yaw">
+          <joint axis="0 0 -1" range="-1.39 4.42" armature="0.01" damping="7" frictionloss=".1"/>
+          <position ctrlrange="-1.39 4.42" kp="20"/>
+        </default>
+        <default class="wrist_pitch">
+          <joint axis="0 0 1" range="-1.57 0.56" armature="0.01" frictionloss=".1"/>
+          <position ctrlrange="-1.57 0.56" kp="50"/>
+        </default>
+        <default class="wrist_roll">
+          <joint axis="0 0 1" range="-3.14 3.14" armature="0.01" frictionloss=".1"/>
+          <position ctrlrange="-3.14 3.14" kp="20"/>
+        </default>
+        <default class="finger_open">
+          <joint axis="0 -1 0" range="-0.6 0.6" damping="0.0001" armature="0.01" frictionloss=".1"/>
+          <position ctrlrange="-0.6 0.6" kp="4000" kv="124"/>
+        </default>
+        <default class="finger_slide">
+          <joint type="slide" axis="0 0 1" range="-0.02 .04" armature="0.1" damping="0.0001"/>
+          <position ctrlrange="-0.02 .04" kp="4000" kv="124"/>
+        </default>
+      </default>
+      <default class="visual">
+        <geom group="2" type="mesh" contype="0" conaffinity="0"/>
+      </default>
+      <default class="collision">
+        <geom group="3" type="mesh"/>
+        <default class="caster">
+          <geom type="sphere" size=".02" pos="-0.24 0 .02" condim="1" priority="1"/>
+        </default>
+        <default class="rubber">
+          <geom condim="6" friction="2 0.02 0.1" priority="1" solref="0.02 1" solimp="0.99 0.99 0.01" conaffinity="1"/>
+        </default>
+      </default>
+    </default>
+  </default>
+
+  <asset>
+    <!-- Materials for simplified base -->
+    <material name="base_blue" rgba="0.2 0.4 0.8 1"/>
+    <material name="base_gray" rgba="0.5 0.5 0.5 1"/>
+    <material name="wheel_black" rgba="0.1 0.1 0.1 1"/>
+    
+    <!-- Original robot materials (subset needed) -->
+    <material name="Generic_Black" rgba="0.036889 0.036889 0.036889 1"/>
+    <material name="3D_Print_Black" rgba="0.114435 0.114435 0.114435 1"/>
+    <material name="Pantone_Black_6_U" rgba="0.072272 0.076185 0.093059 1"/>
+    <material name="Pure_Black" rgba="0 0 0 1"/>
+    <material name="Gray_Lens" rgba="0.3 0.3 0.3 1" reflectance="0.3"/>
+    <material name="Servo_Blue" rgba="0.0823 0.4392 0.7137 1"/>
+    <material name="Stepper_Black" rgba="0.0823 0.0823 0.0823 1"/>
+    
+    <!-- Original robot meshes for upper components -->
+    <mesh name="link_mast" file="link_mast.obj"/>
+    <mesh name="link_lift_0" file="link_lift_0.obj"/>
+    <mesh name="link_lift_8" file="link_lift_8.obj"/>
+    <mesh name="link_lift_9" file="link_lift_9.obj"/>
+    
+    <!-- Head meshes -->
+    <mesh name="link_head_0" file="link_head_0.obj"/>
+    <mesh name="link_head_1" file="link_head_1.obj"/>
+    <mesh name="link_head_2" file="link_head_2.obj"/>
+    <mesh name="link_head_3" file="link_head_3.obj"/>
+    <mesh name="link_head_4" file="link_head_4.obj"/>
+    <mesh name="link_head_5" file="link_head_5.obj"/>
+    <mesh name="link_head_6" file="link_head_6.obj"/>
+    <mesh name="link_head_7" file="link_head_7.obj"/>
+    <mesh name="link_head_8" file="link_head_8.obj"/>
+    <mesh name="link_head_9" file="link_head_9.obj"/>
+    <mesh name="link_head_10" file="link_head_10.obj"/>
+    <mesh name="link_head_11" file="link_head_11.obj"/>
+    
+    <!-- Arm meshes -->
+    <mesh name="link_arm_l0_0" file="link_arm_l0_0.obj"/>
+    <mesh name="link_arm_l0_1" file="link_arm_l0_1.obj"/>
+    <mesh name="link_arm_l0_2" file="link_arm_l0_2.obj"/>
+    <mesh name="link_arm_l1_0" file="link_arm_l1_0.obj"/>
+    <mesh name="link_arm_l1_1" file="link_arm_l1_1.obj"/>
+    <mesh name="link_arm_l2_0" file="link_arm_l2_0.obj"/>
+    <mesh name="link_arm_l2_1" file="link_arm_l2_1.obj"/>
+    <mesh name="link_arm_l3_0" file="link_arm_l3_0.obj"/>
+    <mesh name="link_arm_l3_1" file="link_arm_l3_1.obj"/>
+    <mesh name="link_arm_l4_0" file="link_arm_l4_0.obj"/>
+    <mesh name="link_arm_l4_1" file="link_arm_l4_1.obj"/>
+    
+    <!-- Wrist and gripper meshes -->
+    <mesh name="link_wrist_yaw" file="link_wrist_yaw.obj"/>
+    <mesh name="link_DW3_wrist_pitch" file="link_DW3_wrist_pitch.stl"/>
+    <mesh name="link_DW3_wrist_roll" file="link_DW3_wrist_roll.stl"/>
+    <mesh name="link_SG3_gripper_body" file="link_SG3_gripper_body.obj"/>
+    <mesh name="link_gripper_0" file="link_gripper_0.obj"/>
+    <mesh name="link_gripper_1" file="link_gripper_1.obj"/>
+    
+    <!-- Wheel meshes -->
+    <mesh name="link_left_wheel_0" file="link_left_wheel_0.obj"/>
+    <mesh name="link_left_wheel_1" file="link_left_wheel_1.obj"/>
+    <mesh name="link_right_wheel_0" file="link_right_wheel_0.obj"/>
+    <mesh name="link_right_wheel_1" file="link_right_wheel_1.obj"/>
+    
+    <!-- LiDAR mesh -->
+    <mesh name="laser" file="laser.obj"/>
+  </asset>
+
+  <worldbody>
+    <light name="spotlight" mode="targetbodycom" target="base_link" pos="0 -1 2"/>
+    
+    <!-- SIMPLIFIED MOBILE BASE - Single cylinder replacing all base meshes -->
+    <body name="base_link" pos="0 0 0.051">
+      <!-- Simplified base visual - single blue cylinder -->
+      <geom name="base_cylinder_visual" type="cylinder" size="0.17 0.051" 
+            material="base_blue" group="2" mass="0"/>
+      
+      <!-- Simplified base collision - cylinder with realistic mass -->
+      <geom name="base_cylinder_collision" type="cylinder" size="0.17 0.051" 
+            material="base_gray" group="3" mass="25.0"/>
+      
+      <!-- Caster sphere (keep original) -->
+      <geom name="caster" class="caster" material="wheel_black"/>
+
+      <!-- Base joints for mobility -->
+      <joint name="base_x" type="slide" axis="1 0 0" damping="10" range="-100 100"/>
+      <joint name="base_y" type="slide" axis="0 1 0" damping="10" range="-100 100"/>
+      <joint name="base_theta" type="hinge" axis="0 0 1" damping="5" range="-6.28 6.28"/>
+
+      <!-- WHEELS (Keep original specifications and meshes) -->
+      <body name="link_left_wheel" pos="0 0.17035 0.0508">
+        <joint name="joint_left_wheel" class="wheel"/>
+        <geom name="link_left_wheel_0_visual" class="visual" mesh="link_left_wheel_0" material="wheel_black"/>
+        <geom name="link_left_wheel_1_visual" class="visual" mesh="link_left_wheel_1" material="Generic_Black"/>
+        <geom name="link_left_wheel_collision" class="rubber" type="cylinder" size="0.05 0.0125" mass="0.15"/>
+      </body>
+
+      <body name="link_right_wheel" pos="0 -0.17035 0.0508">
+        <joint name="joint_right_wheel" class="wheel"/>
+        <geom name="link_right_wheel_0_visual" class="visual" mesh="link_right_wheel_0" material="wheel_black"/>
+        <geom name="link_right_wheel_1_visual" class="visual" mesh="link_right_wheel_1" material="Generic_Black"/>
+        <geom name="link_right_wheel_collision" class="rubber" type="cylinder" size="0.05 0.0125" mass="0.15"/>
+      </body>
+
+      <!-- LIDAR (Keep exact original position and specs) -->
+      <body name="laser" pos="0.004 0 0.1664" quat="0 0 0 1">
+        <geom name="laser_visual" class="visual" mesh="laser" material="Pure_Black"/>
+        <geom name="laser_collision" type="cylinder" size="0.04 0.03" material="Pure_Black" group="3" mass="0.2"/>
+        <site name="base_lidar" pos="0 0 0" size="0.01"/>
+      </body>
+
+      <!-- IMU (Keep exact original position) -->
+      <site name="base_imu" pos="-0.12838 0.0031592 0.1474" euler="-3.1416 0 1.5708"/>
+
+      <!-- MAST (Keep original - connects base to upper robot) -->
+      <body name="link_mast" pos="-0.067 0.135 0.0284">
+        <geom name="link_mast_visual" class="visual" mesh="link_mast" material="Generic_Black"/>
+        <geom name="link_mast_collision" type="cylinder" size="0.025 0.6" material="Generic_Black" group="3" mass="1.8285"/>
+
+        <!-- LIFT SYSTEM (Keep all original components) -->
+        <body name="link_lift" pos="-0.037385 -0.000001 0.17159">
+          <joint name="joint_lift" class="lift"/>
+          <geom name="link_lift_0_visual" class="visual" mesh="link_lift_0" material="Generic_Black"/>
+          <geom name="link_lift_8_visual" class="visual" mesh="link_lift_8" material="Stepper_Black"/>
+          <geom name="link_lift_9_visual" class="visual" mesh="link_lift_9" material="Generic_Black"/>
+          <geom name="link_lift_collision" type="box" size="0.05 0.05 0.2" material="Generic_Black" group="3" mass="3.0"/>
+
+          <!-- HEAD ASSEMBLY (Keep all original components) -->
+          <body name="link_head_pan" pos="0.13395 -0.000005 1.1568">
+            <joint name="joint_head_pan" class="head_pan"/>
+            <geom name="head_pan_collision" type="cylinder" size="0.03 0.02" material="Generic_Black" group="3" mass="0.2"/>
+            
+            <body name="link_head_tilt" pos="0 0 0">
+              <joint name="joint_head_tilt" class="head_tilt"/>
+              <geom name="head_tilt_collision" type="box" size="0.05 0.05 0.02" material="Generic_Black" group="3" mass="0.15"/>
+              
+              <!-- Head visual components (keep original) -->
+              <geom name="link_head_0_visual" class="visual" mesh="link_head_0" material="Generic_Black"/>
+              <geom name="link_head_1_visual" class="visual" mesh="link_head_1" material="3D_Print_Black"/>
+              <geom name="link_head_2_visual" class="visual" mesh="link_head_2" material="Pantone_Black_6_U"/>
+              <geom name="link_head_3_visual" class="visual" mesh="link_head_3" material="3D_Print_Black"/>
+              <geom name="link_head_4_visual" class="visual" mesh="link_head_4" material="Generic_Black"/>
+              <geom name="link_head_5_visual" class="visual" mesh="link_head_5" material="Pure_Black"/>
+              <geom name="link_head_6_visual" class="visual" mesh="link_head_6" material="Gray_Lens"/>
+              <geom name="link_head_7_visual" class="visual" mesh="link_head_7" material="Pure_Black"/>
+              <geom name="link_head_8_visual" class="visual" mesh="link_head_8" material="Generic_Black"/>
+              <geom name="link_head_9_visual" class="visual" mesh="link_head_9" material="Pure_Black"/>
+              <geom name="link_head_10_visual" class="visual" mesh="link_head_10" material="Generic_Black"/>
+              <geom name="link_head_11_visual" class="visual" mesh="link_head_11" material="3D_Print_Black"/>
+              
+              <!-- Head collision -->
+              <geom name="link_head_collision" type="box" size="0.1 0.15 0.1" material="Generic_Black" group="3" mass="0.833027"/>
+              
+              <!-- D435i Camera Assembly (Keep exact original position) -->
+              <body name="realsense" pos="0.0406 0.0053 0.0307" euler="0 0 0">
+                <geom name="d435i_housing" type="box" size="0.012 0.045 0.01" material="Pure_Black" group="2" mass="0"/>
+                <camera name="d435i_camera_rgb" pos="0 0.015 0" euler="1.57 -1.57 0" fovy="42"/>
+                <camera name="d435i_camera_depth" pos="0 0.015 0" euler="1.57 -1.57 0" fovy="42"/>
+              </body>
+              
+              <!-- Navigation Camera (Keep exact original position) -->
+              <body name="link_SE3_head_nav_cam" pos="0.04 -0.0412 -0.0246" euler="0 1.5707963 0">
+                <body name="head_nav_cam" pos="0 0 0">
+                  <geom name="nav_cam_housing" type="box" size="0.01 0.03 0.008" material="Pure_Black" group="2" mass="0"/>
+                  <camera name="nav_camera_rgb" pos="0 0 0" euler="-3.1415926 0 -1.5707963" fovy="69"/>
+                </body>
+              </body>
+            </body>
+          </body>
+
+          <!-- ARM SYSTEM (Keep all original telescoping components) -->
+          <body name="link_arm_l4" pos="0.06478 0.000003 0.41821" gravcomp="1">
+            <joint name="joint_arm_l4" class="telescope"/>
+            <geom name="link_arm_l4_0_visual" class="visual" mesh="link_arm_l4_0" material="Generic_Black"/>
+            <geom name="link_arm_l4_1_visual" class="visual" mesh="link_arm_l4_1" material="Servo_Blue"/>
+            <geom name="link_arm_l4_collision" type="box" size="0.15 0.03 0.03" material="Generic_Black" group="3" mass="0.2"/>
+
+            <body name="link_arm_l3" pos="0.13 0 0" gravcomp="1">
+              <joint name="joint_arm_l3" class="telescope"/>
+              <geom name="link_arm_l3_0_visual" class="visual" mesh="link_arm_l3_0" material="Generic_Black"/>
+              <geom name="link_arm_l3_1_visual" class="visual" mesh="link_arm_l3_1" material="Servo_Blue"/>
+              <geom name="link_arm_l3_collision" type="box" size="0.13 0.025 0.025" material="Generic_Black" group="3" mass="0.18"/>
+
+              <body name="link_arm_l2" pos="0.13 0 0" gravcomp="1">
+                <joint name="joint_arm_l2" class="telescope"/>
+                <geom name="link_arm_l2_0_visual" class="visual" mesh="link_arm_l2_0" material="Generic_Black"/>
+                <geom name="link_arm_l2_1_visual" class="visual" mesh="link_arm_l2_1" material="Servo_Blue"/>
+                <geom name="link_arm_l2_collision" type="box" size="0.13 0.02 0.02" material="Generic_Black" group="3" mass="0.16"/>
+
+                <body name="link_arm_l1" pos="0.13 0 0" gravcomp="1">
+                  <joint name="joint_arm_l1" class="telescope"/>
+                  <geom name="link_arm_l1_0_visual" class="visual" mesh="link_arm_l1_0" material="Generic_Black"/>
+                  <geom name="link_arm_l1_1_visual" class="visual" mesh="link_arm_l1_1" material="Servo_Blue"/>
+                  <geom name="link_arm_l1_collision" type="box" size="0.13 0.015 0.015" material="Generic_Black" group="3" mass="0.15"/>
+
+                  <body name="link_arm_l0" pos="0.13 0 0" gravcomp="1">
+                    <joint name="joint_arm_l0" class="telescope"/>
+                    <geom name="link_arm_l0_0_visual" class="visual" mesh="link_arm_l0_0" material="Generic_Black"/>
+                    <geom name="link_arm_l0_1_visual" class="visual" mesh="link_arm_l0_1" material="Servo_Blue"/>
+                    <geom name="link_arm_l0_2_visual" class="visual" mesh="link_arm_l0_2" material="3D_Print_Black"/>
+                    <geom name="link_arm_l0_collision" type="box" size="0.13 0.01 0.01" material="Generic_Black" group="3" mass="0.3"/>
+
+                    <!-- WRIST ASSEMBLY (Keep all original 3-DOF wrist) -->
+                    <body name="link_wrist_yaw" pos="0.13 0 0">
+                      <joint name="joint_wrist_yaw" class="wrist_yaw"/>
+                      <geom name="link_wrist_yaw_visual" class="visual" mesh="link_wrist_yaw" material="Stepper_Black"/>
+                      <geom name="link_wrist_yaw_collision" type="cylinder" size="0.025 0.04" material="Stepper_Black" group="3" mass="0.3"/>
+
+                      <body name="link_DW3_wrist_pitch" pos="0 0 0">
+                        <joint name="joint_wrist_pitch" class="wrist_pitch"/>
+                        <geom name="link_DW3_wrist_pitch_visual" class="visual" mesh="link_DW3_wrist_pitch" material="Generic_Black"/>
+                        <geom name="link_DW3_wrist_pitch_collision" type="box" size="0.03 0.04 0.02" material="Stepper_Black" group="3" mass="0.2"/>
+
+                        <body name="link_wrist_roll" pos="0 0 0">
+                          <joint name="joint_wrist_roll" class="wrist_roll"/>
+                          <geom name="link_DW3_wrist_roll_visual" class="visual" mesh="link_DW3_wrist_roll" material="Stepper_Black"/>
+                          <geom name="link_wrist_roll_collision" type="cylinder" size="0.015 0.03" material="Stepper_Black" group="3" mass="0.1"/>
+
+                          <!-- GRIPPER ASSEMBLY (Keep original with D405 camera) -->
+                          <body name="link_SG3_gripper_body" pos="0.043 0 0">
+                            <joint name="joint_gripper_slide" class="finger_slide"/>
+                            <geom name="link_SG3_gripper_body_visual" class="visual" mesh="link_SG3_gripper_body" material="Generic_Black"/>
+                            <geom name="link_gripper_0_visual" class="visual" mesh="link_gripper_0" material="3D_Print_Black"/>
+                            <geom name="link_gripper_1_visual" class="visual" mesh="link_gripper_1" material="Generic_Black"/>
+                            <geom name="link_SG3_gripper_body_collision" type="box" size="0.04 0.03 0.02" material="Generic_Black" group="3" mass="0.2"/>
+                            
+                            <!-- D405 Hand Camera (Keep exact original position) -->
+                            <body name="aruco_d405" pos="0.05 0 0">
+                              <body name="d405" pos="0 -0.03068 0" euler="1.57 0 0">
+                                <body name="d405_cam" pos="0 0 0" euler="0 0 3.14">
+                                  <geom name="d405_housing" type="box" size="0.02 0.03 0.008" material="Pure_Black" group="2" mass="0"/>
+                                  <camera name="d405_rgb" pos="0 0 0" euler="-3.14 0 -3.14" fovy="58"/>
+                                  <camera name="d405_depth" pos="0 0 0" euler="-3.14 0 -3.14" fovy="58"/>
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <!-- SENSORS (Keep all original sensor definitions) -->
+  <sensor>
+    <!-- IMU Sensors -->
+    <gyro name="base_gyro" site="base_imu"/>
+    <accelerometer name="base_accel" site="base_imu"/>
+    
+    <!-- LIDAR Sensor -->
+    <rangefinder name="base_lidar" site="base_lidar" cutoff="10.0"/>
+  </sensor>
+
+  <!-- ACTUATORS (Keep all original actuators) -->
+  <actuator>
+    <!-- Wheel actuators -->
+    <velocity name="left_wheel" joint="joint_left_wheel" class="wheel"/>
+    <velocity name="right_wheel" joint="joint_right_wheel" class="wheel"/>
+    
+    <!-- Lift actuator -->
+    <general name="lift" joint="joint_lift" class="lift"/>
+    
+    <!-- Arm actuators -->
+    <general name="arm_l4" joint="joint_arm_l4" class="telescope"/>
+    <general name="arm_l3" joint="joint_arm_l3" class="telescope"/>
+    <general name="arm_l2" joint="joint_arm_l2" class="telescope"/>
+    <general name="arm_l1" joint="joint_arm_l1" class="telescope"/>
+    <general name="arm_l0" joint="joint_arm_l0" class="telescope"/>
+    
+    <!-- Head actuators -->
+    <position name="head_pan" joint="joint_head_pan" class="head_pan"/>
+    <position name="head_tilt" joint="joint_head_tilt" class="head_tilt"/>
+    
+    <!-- Wrist actuators -->
+    <position name="wrist_yaw" joint="joint_wrist_yaw" class="wrist_yaw"/>
+    <position name="wrist_pitch" joint="joint_wrist_pitch" class="wrist_pitch"/>
+    <position name="wrist_roll" joint="joint_wrist_roll" class="wrist_roll"/>
+    
+    <!-- Gripper actuator -->
+    <position name="gripper" joint="joint_gripper_slide" class="finger_slide"/>
+  </actuator>
+
+</mujoco>

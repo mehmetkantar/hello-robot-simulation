@@ -61,6 +61,41 @@ export QT_QPA_PLATFORM=xcb
 export QT_QPA_PLATFORM_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins
 unset CV2_QT_PATH
 
+# Enable NVIDIA PRIME render offload for MAXIMUM GPU performance
+export __NV_PRIME_RENDER_OFFLOAD=1      # Use NVIDIA GPU for rendering
+export __GLX_VENDOR_LIBRARY_NAME=nvidia # Use NVIDIA OpenGL library
+export MUJOCO_GL=egl                    # Use EGL backend for GPU acceleration
+export MUJOCO_GPU_DEVICE_ID=0           # Use first GPU
+
+# Maximum GPU utilization settings
+export __GL_THREADED_OPTIMIZATIONS=1    # Enable threaded optimizations
+export __GL_SYNC_TO_VBLANK=0            # Disable VSync for performance
+export __GL_YIELD=NOTHING               # Don't yield GPU resources
+export __GL_SHADER_DISK_CACHE=1         # Enable shader cache
+export __GL_SHADER_DISK_CACHE_PATH=/tmp/gl_shader_cache
+
+# CUDA optimizations for ULTRA GPU utilization
+export CUDA_LAUNCH_BLOCKING=0           # Non-blocking CUDA calls
+export CUDA_VISIBLE_DEVICES=0           # Use first CUDA device
+export CUDA_DEVICE_ORDER=PCI_BUS_ID     # Consistent device ordering
+export CUDA_CACHE_MAXSIZE=6442450944    # 6GB CUDA cache (ultra)
+export CUDA_MALLOC_HEAP_SIZE=2147483648 # 2GB heap (ultra)
+export CUDA_MEMORY_POOL_ENABLE=1        # Enable memory pool
+export CUDA_DEVICE_MAX_CONNECTIONS=64   # Ultra GPU connections
+export CUDA_FORCE_PTX_JIT=1             # Force JIT compilation
+export CUDA_AUTO_BOOST=1                # Auto boost clocks
+export __GL_MaxFramesAllowed=0          # No frame limiting
+export __GL_FSAA_MODE=16                # 16x antialiasing
+
+# CPU-GPU optimization for ULTRA throughput
+export OMP_NUM_THREADS=16               # Ultra multi-threading
+export MKL_NUM_THREADS=16               # Intel MKL ultra threading
+export OPENBLAS_NUM_THREADS=16          # OpenBLAS ultra threading
+export OMP_DYNAMIC=TRUE                 # Dynamic thread adjustment
+
+# Additional NVIDIA optimizations
+export NVIDIA_TF32_OVERRIDE=0           # Use full precision
+
 print_color "🧹 Cleaning up any existing processes..." $YELLOW
 cleanup_all
 sleep 2
@@ -161,13 +196,15 @@ sleep 4
 
 print_color "✅ SLAM Toolbox started (PID: $SLAM_TOOLBOX_PID)" $GREEN
 
-# Step 4: Start RViz (if not disabled)
+# Step 4: Start RViz (if not disabled) - Use Intel GPU for compatibility
 if [ "$NO_RVIZ" != "true" ]; then
-    print_color "🔧 Step 4: Starting RViz visualization..." $GREEN
-    rviz2 -d rviz/stretch_slam.rviz --ros-args -p use_sim_time:=true &
+    print_color "🔧 Step 4: Starting RViz visualization (Intel GPU)..." $GREEN
+    # Temporarily disable NVIDIA PRIME for RViz to avoid compatibility issues
+    env -u __NV_PRIME_RENDER_OFFLOAD -u __GLX_VENDOR_LIBRARY_NAME \
+        rviz2 -d rviz/stretch_slam.rviz --ros-args -p use_sim_time:=true &
     RVIZ_PID=$!
     sleep 3
-    print_color "✅ RViz started (PID: $RVIZ_PID)" $GREEN
+    print_color "✅ RViz started with Intel GPU (PID: $RVIZ_PID)" $GREEN
 else
     print_color "⏭️  Step 4: RViz disabled" $YELLOW
 fi

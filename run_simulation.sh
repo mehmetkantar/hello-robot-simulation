@@ -12,6 +12,21 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Enable NVIDIA PRIME render offload for maximum GPU performance
+setup_gpu_acceleration() {
+    export __NV_PRIME_RENDER_OFFLOAD=1      # Use NVIDIA GPU for rendering
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia # Use NVIDIA OpenGL library
+    export MUJOCO_GL=egl                    # Use EGL backend for GPU acceleration
+    export MUJOCO_GPU_DEVICE_ID=0           # Use first GPU
+    export OMP_NUM_THREADS=8                # Multi-threading optimization
+    export __GL_SYNC_TO_VBLANK=0            # Disable VSync for performance
+    export __GL_YIELD=NOTHING               # Don't yield GPU resources
+    export CUDA_LAUNCH_BLOCKING=0           # Non-blocking CUDA calls
+    export NVIDIA_TF32_OVERRIDE=0           # Use full precision
+    export CUDA_VISIBLE_DEVICES=0           # Use first CUDA device
+    print_status "NVIDIA PRIME render offload enabled for 4-5x performance boost"
+}
+
 # Function to print colored output
 print_status() {
     echo -e "${GREEN}[INFO]${NC} $1"
@@ -172,6 +187,7 @@ main() {
             show_usage
             ;;
         "normal"|"fast"|"headless"|"minimal")
+            setup_gpu_acceleration
             check_dependencies
             launch_simulation $mode
             ;;

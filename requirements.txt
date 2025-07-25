@@ -1,23 +1,43 @@
-# Hello Robot Stretch Dual GUI Simulation Requirements
+# Hello Robot Stretch Simulation Requirements
+# Core ROS2 and robotics dependencies
 
-# Core GUI and Image Processing
-tkinter  # Usually included with Python, but listed for completeness
-Pillow>=9.0.0  # PIL for image processing
-opencv-python>=4.5.0  # OpenCV for image manipulation
-numpy>=1.21.0  # NumPy for array operations
+# ROS2 Python Client Library
+rclpy>=3.3.0
 
-# Optional but recommended for better performance
-opencv-contrib-python>=4.5.0  # Additional OpenCV features
+# NumPy for numerical computations
+numpy>=1.21.0
 
-# Note: stretch_mujoco is required but should be installed separately
-# following the official Hello Robot installation guide as it has
-# specific system dependencies and configuration requirements.
+# OpenCV for image processing
+opencv-python>=4.5.0
 
-# The following packages are typically included with stretch_mujoco:
-# - mujoco
-# - mujoco-python-viewer
-# - stretch_mujoco (main package)
+# Pillow for image handling
+Pillow>=8.3.0
 
-# For development and debugging (optional):
-# matplotlib>=3.5.0  # For data visualization if needed
-# jupyter>=1.0.0     # For notebook development
+# Standard library extensions
+setuptools>=58.0.0
+
+# HTTP server for web interface
+# (Built-in http.server module used - no additional install needed)
+
+# Optional: Enhanced web features
+# websockets>=10.0  # Uncomment for WebSocket support
+# flask>=2.0.0      # Uncomment for Flask-based web interface
+
+# Development and testing
+pytest>=6.2.0
+pytest-cov>=3.0.0
+
+# Documentation
+# sphinx>=4.0.0    # Uncomment for documentation generation
+
+# Note: The following are system-level dependencies that cannot be installed via pip:
+# - ROS2 Humble (install via apt or from source)
+# - Hello Robot Stretch MuJoCo package (install separately)
+# - SLAM Toolbox (ros-humble-slam-toolbox)
+# - Navigation2 (ros-humble-nav2-*)
+# - RViz2 (ros-humble-rviz2)
+# - robot_state_publisher (ros-humble-robot-state-publisher)
+
+# For development
+# ipython>=7.0.0    # Enhanced Python shell
+# jupyter>=1.0.0    # Notebook interface for development

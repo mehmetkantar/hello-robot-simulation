@@ -1,163 +1,107 @@
-# Hello Robot Stretch Dual GUI Simulation
+# Hello Robot Stretch Simulation with Web Teleop
 
-Advanced GUI control interface for Hello Robot Stretch with integrated MuJoCo simulation and live camera feeds.
+A comprehensive simulation system for the Hello Robot Stretch with MuJoCo physics, ROS2 SLAM integration, and web-based teleoperation control.
 
-## Features
+## ✨ Features
 
-- **Dual Interface**: Advanced GUI controls + MuJoCo 3D viewer
-- **Live Camera Feeds**: Real-time camera views from D405, D435i, and Navigation cameras
-- **Performance Optimization**: Fast mode and configurable camera FPS for optimal simulation speed
-- **Comprehensive Control**: 
-  - Base movement with velocity scaling (WASD)
-  - Arm control (IJKL)
-  - Head control (TFGH)
-  - Wrist control (OPCVER)
-  - Gripper control (NM)
-- **Real-time Monitoring**: Joint status, robot pose, and simulation metrics
-- **Keyboard Shortcuts**: Full keyboard control support
+- **🤖 Complete Robot Simulation**: Full Stretch robot simulation in MuJoCo with realistic physics
+- **🌐 Web Teleoperation**: Browser-based control interface for base movement and manipulator control
+- **🗺️ Real-time SLAM**: Integrated SLAM Toolbox for mapping and localization
+- **📊 RViz Visualization**: Live visualization of robot state, sensor data, and generated maps
+- **🏢 Multiple Environments**: Office, kitchen, and custom environments for testing
+- **🦾 Full Robot Control**: Base movement, lift, arm extension, head pan/tilt, wrist, and gripper control
 
-## Requirements
+## 🚀 Quick Start
 
-- Python 3.8+
-- stretch_mujoco
-- tkinter
-- PIL (Pillow)
-- OpenCV (cv2)
-- NumPy
+### Prerequisites
 
-## Installation
+- Ubuntu 22.04 with ROS2 Humble
+- Python 3.10+
+- Hello Robot Stretch MuJoCo package
+- Web browser for teleoperation interface
 
-1. **Install stretch_mujoco**:
+### Installation
+
+1. **Clone the repository:**
    ```bash
-   # Follow the installation guide for stretch_mujoco
-   # Ensure it's properly installed and configured
+   git clone https://github.com/mehmetkantar/hello-robot-simulation.git
+   cd hello-robot-simulation
    ```
 
-2. **Install Python dependencies**:
+2. **Run the setup script:**
    ```bash
-   pip install -r requirements.txt
+   chmod +x setup.sh
+   ./setup.sh
    ```
 
-3. **Run the simulation**:
+3. **Launch the complete system:**
    ```bash
-   python stretch_dual_gui.py
+   ./launch_full_simulation.sh --complex-office
    ```
 
-## Usage
+4. **Open web controller:**
+   - Navigate to `http://localhost:8081` in your web browser
+   - Use the interface to control the robot
 
-### Starting the Simulation
+## 🎮 Usage
 
-1. **Configure options**:
-   - Enable/disable MuJoCo 3D Viewer
-   - Enable/disable cameras
-   - Enable Fast Mode for maximum performance
-   - Adjust Camera FPS (1-30)
+### Launch Options
 
-2. **Click "Start Dual GUI Mode"**
+```bash
+# Default (complex office environment)
+./launch_full_simulation.sh
 
-3. **Control the robot**:
-   - Use GUI buttons or keyboard shortcuts
-   - Monitor real-time camera feeds
-   - Check status in the Status & Monitor tab
+# Different environments
+./launch_full_simulation.sh --simple           # Simple environment
+./launch_full_simulation.sh --kitchen          # Kitchen environment
+./launch_full_simulation.sh --complex-office   # Complex office (default)
 
-### Performance Optimization
+# Performance options
+./launch_full_simulation.sh --headless         # No MuJoCo GUI (better performance)
+./launch_full_simulation.sh --no-rviz          # No RViz visualization
+./launch_full_simulation.sh --no-web           # No web controller
 
-The simulation performance can be optimized based on your needs:
-
-- **Fast Mode**: Disables cameras for maximum simulation speed (~1.0x real-time)
-- **Low Camera FPS**: Reduce camera FPS to 1-5 for better performance
-- **No Cameras**: Disable cameras while keeping MuJoCo viewer
-
-### Keyboard Controls
-
-| Key | Action |
-|-----|--------|
-| W/S | Forward/Backward |
-| A/D | Rotate Left/Right |
-| T/G | Head Tilt Up/Down |
-| F/H | Head Pan Left/Right |
-| I/K | Lift Up/Down |
-| J/L | Arm Retract/Extend |
-| O/P | Wrist Yaw Left/Right |
-| C/V | Wrist Pitch Up/Down |
-| E/R | Wrist Roll CCW/CW |
-| N/M | Gripper Open/Close |
-| Z | Print Status |
-| Q | Stop Simulation |
-
-### Velocity Scaling
-
-Base movement supports velocity scaling:
-- **Single click**: Normal speed (1x)
-- **Multiple clicks**: Increased speed (up to 3x)
-- **Stop button**: Resets velocity scaling
-
-## Camera Views
-
-The simulation provides three live camera feeds:
-
-1. **D405 RGB Camera**: Head-mounted camera for navigation
-2. **D435i RGB Camera**: Alternative head camera
-3. **Navigation RGB Camera**: Wide-angle navigation view
-
-Cameras are displayed in a grid layout in the main control panel.
-
-## Project Structure
-
-```
-hello-robot-simulation/
-├── stretch_dual_gui.py     # Main simulation application
-├── requirements.txt        # Python dependencies
-├── README.md              # This file
-├── docs/                  # Documentation
-│   ├── USAGE_GUIDE.md     # Detailed usage instructions
-│   └── TROUBLESHOOTING.md # Common issues and solutions
-└── examples/              # Example scripts and configurations
+# Custom port
+./launch_full_simulation.sh --port 8080        # Use different port
 ```
 
-## Troubleshooting
+### Web Interface Controls
 
-### Common Issues
+- **🚗 Base Movement**: Forward, backward, left, right, rotate
+- **🏗️ Lift Control**: Vertical positioning (0-1.1m)
+- **🦾 Arm Extension**: Arm reach control (0-0.52m)
+- **👁️ Head Control**: Pan (-1.57 to 1.57 rad) and tilt (-0.52 to 0.52 rad)
+- **⚙️ Speed Control**: Adjustable movement speed
 
-1. **Simulation runs slowly (< 0.1x real-time)**:
-   - Enable "Fast Mode" to disable cameras
-   - Reduce Camera FPS to 1-5
-   - Ensure stretch_mujoco is properly installed
+## 🧪 Testing
 
-2. **Camera feeds show "Camera Not Connected"**:
-   - Ensure cameras are enabled in the main GUI
-   - Check that stretch_mujoco supports camera rendering
-   - Restart simulation with cameras enabled
+```bash
+# Test web controller connection to robot
+python3 test_web_controller_connection.py
 
-3. **MuJoCo viewer doesn't appear**:
-   - Check "Enable MuJoCo 3D Viewer" option
-   - Ensure graphics drivers are properly installed
+# Test direct MuJoCo control
+python3 direct_robot_test.py
 
-4. **Keyboard shortcuts don't work**:
-   - Click on the main GUI window to focus it
-   - Ensure simulation is running
+# Test ROS2 connectivity
+python3 test_ros_connection.py
+```
 
-### Performance Tips
+## 📦 Dependencies
 
-- **For maximum speed**: Enable Fast Mode (disables cameras)
-- **For balanced performance**: Set Camera FPS to 2-5
-- **For full features**: Use default settings (may be slower)
+See `requirements.txt` and run `./setup.sh` for automatic installation.
 
-## Contributing
+## 🤝 Contributing
 
-This project is part of the Hello Robot ecosystem. Please follow the standard contribution guidelines.
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
 
-## License
+## 📄 License
 
-This project follows the same license as the Hello Robot stretch_mujoco package.
-
-## Support
-
-For issues related to:
-- **stretch_mujoco**: Check the official stretch_mujoco documentation
-- **This GUI**: Create an issue in this repository
-- **Hello Robot hardware**: Contact Hello Robot support
+MIT License - see LICENSE file for details.
 
 ---
 
-**Generated with Claude Code** 🤖
+**🤖 Built with Claude Code - AI-assisted development for robotics**

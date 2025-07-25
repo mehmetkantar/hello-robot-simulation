@@ -41,14 +41,36 @@
     <!-- REMOVED: All Vertical Corridor walls (lines 42-52) - Major navigation barriers -->
     <!-- REMOVED: Laboratory separation walls (lines 73,76) - Block north/south areas -->
     
-    <!-- OFFICE ROOMS - ALL WALLS REMOVED FOR MAXIMUM NAVIGATION -->
-    <!-- All office partition walls removed - completely open floor plan -->
+    <!-- Office Rooms - MODIFIED: Remove some partition walls for openings -->
+    <!-- Office 1 (NE) - Keep south wall only, remove west wall for access -->
+    <geom name="office1_wall_s" type="box" size="3.8 0.1 1.5" pos="8.7 3.5 1.5" material="office_mat"/>
+    <!-- REMOVED: office1_wall_w for open access -->
     
-    <!-- CONFERENCE ROOM - COMPLETELY OPEN ACCESS -->
-    <!-- All conference room walls removed for open access -->
+    <!-- Office 2 (NW) - Keep south wall only, remove east wall for access -->
+    <geom name="office2_wall_s" type="box" size="3.8 0.1 1.5" pos="-8.7 3.5 1.5" material="office_mat"/>
+    <!-- REMOVED: office2_wall_e for open access -->
     
-    <!-- STORAGE ROOM - COMPLETELY OPEN ACCESS -->
-    <!-- All storage room walls removed for open access -->
+    <!-- Office 3 (SE) - Keep north wall only, remove west wall for access -->
+    <geom name="office3_wall_n" type="box" size="3.8 0.1 1.5" pos="8.7 -3.5 1.5" material="office_mat"/>
+    <!-- REMOVED: office3_wall_w for open access -->
+    
+    <!-- Office 4 (SW) - Keep north wall only, remove east wall for access -->  
+    <geom name="office4_wall_n" type="box" size="3.8 0.1 1.5" pos="-8.7 -3.5 1.5" material="office_mat"/>
+    <!-- REMOVED: office4_wall_e for open access -->
+    
+    <!-- Conference Room (Center East) - MODIFIED: Create opening -->
+    <geom name="conf_wall_w" type="box" size="0.1 0.6 1.5" pos="9.9 0.7 1.5" material="office_mat"/>
+    <!-- OPENING: 1.6m gap created for robot access -->
+    <geom name="conf_wall_w2" type="box" size="0.1 0.6 1.5" pos="9.9 -0.7 1.5" material="office_mat"/>
+    <geom name="conf_wall_n" type="box" size="2.4 0.1 1.5" pos="11.3 1.4 1.5" material="office_mat"/>
+    <geom name="conf_wall_s" type="box" size="2.4 0.1 1.5" pos="11.3 -1.4 1.5" material="office_mat"/>
+    
+    <!-- Storage Room (Center West) - MODIFIED: Create opening -->
+    <geom name="storage_wall_e" type="box" size="0.1 0.6 1.5" pos="-9.9 0.7 1.5" material="office_mat"/>
+    <!-- OPENING: 1.6m gap created for robot access -->
+    <geom name="storage_wall_e2" type="box" size="0.1 0.6 1.5" pos="-9.9 -0.7 1.5" material="office_mat"/>
+    <geom name="storage_wall_n" type="box" size="2.4 0.1 1.5" pos="-11.3 1.4 1.5" material="office_mat"/>
+    <geom name="storage_wall_s" type="box" size="2.4 0.1 1.5" pos="-11.3 -1.4 1.5" material="office_mat"/>
     
     <!-- Furniture and Obstacles -->
     <!-- Office 1 furniture -->
