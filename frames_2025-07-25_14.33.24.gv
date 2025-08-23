@@ -1,0 +1,12 @@
+digraph G {
+"map" -> "odom"[label=" Broadcaster: default_authority\nAverage rate: 26.001\nBuffer length: 5.0\nMost recent transform: 1753443204.493244\nOldest transform: 1753443199.493355\n"];
+"base_link" -> "imu_mobile_base"[label=" Broadcaster: default_authority\nAverage rate: 4.591\nBuffer length: 4.575\nMost recent transform: 1753443204.367938\nOldest transform: 1753443199.793285\n"];
+"link_head" -> "respeaker_base"[label=" Broadcaster: default_authority\nAverage rate: 4.591\nBuffer length: 4.575\nMost recent transform: 1753443204.367938\nOldest transform: 1753443199.793285\n"];
+"link_head" -> "cam_d405_rgb_frame"[label=" Broadcaster: default_authority\nAverage rate: 4.591\nBuffer length: 4.575\nMost recent transform: 1753443204.367938\nOldest transform: 1753443199.793285\n"];
+"link_head" -> "cam_d435i_rgb_frame"[label=" Broadcaster: default_authority\nAverage rate: 4.591\nBuffer length: 4.575\nMost recent transform: 1753443204.367938\nOldest transform: 1753443199.793285\n"];
+"link_head" -> "cam_nav_rgb_frame"[label=" Broadcaster: default_authority\nAverage rate: 4.591\nBuffer length: 4.575\nMost recent transform: 1753443204.367938\nOldest transform: 1753443199.793285\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1753443204.5002136"[ shape=plaintext ] ;
+}->"link_head";
+}

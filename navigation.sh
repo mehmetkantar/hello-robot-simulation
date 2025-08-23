@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Complete Stretch Robot Simulation Launcher
-# Starts: MuJoCo + SLAM + RViz + Web Controller
+# Complete Stretch Robot Navigation System Launcher
+# Starts: MuJoCo + SLAM + Nav2 Stack + RViz + Web Controller
+# High-speed autonomous navigation with 5m/s capability
 
 set -e
 
@@ -26,7 +27,7 @@ print_header() {
 
 # Cleanup function
 cleanup_all() {
-    print_color "🛑 Shutting down all simulation components..." $YELLOW
+    print_color "🛑 Shutting down all navigation components..." $YELLOW
     
     # Kill all related processes
     pkill -f "stretch_slam_bridge" 2>/dev/null || true
@@ -36,18 +37,29 @@ cleanup_all() {
     pkill -f "slam_toolbox" 2>/dev/null || true
     pkill -f "rviz2" 2>/dev/null || true
     
+    # Kill Nav2 processes
+    pkill -f "bt_navigator" 2>/dev/null || true
+    pkill -f "controller_server" 2>/dev/null || true
+    pkill -f "planner_server" 2>/dev/null || true
+    pkill -f "behavior_server" 2>/dev/null || true
+    pkill -f "smoother_server" 2>/dev/null || true
+    pkill -f "velocity_smoother" 2>/dev/null || true
+    pkill -f "waypoint_follower" 2>/dev/null || true
+    pkill -f "lifecycle_manager" 2>/dev/null || true
+    
     # Free up port 8081
     lsof -ti:8081 | xargs -r kill -9 2>/dev/null || true
     
     sleep 3
-    print_color "✅ Simulation cleanup complete" $GREEN
+    print_color "✅ Navigation cleanup complete" $GREEN
 }
 
 # Set trap to cleanup on script exit
 trap cleanup_all EXIT INT TERM
 
-print_header "🤖 STRETCH ROBOT FULL SIMULATION"
-print_color "Components: MuJoCo + SLAM + RViz + Web Controller" $CYAN
+print_header "🚀 STRETCH ROBOT AUTONOMOUS NAVIGATION"
+print_color "Components: MuJoCo + SLAM + Nav2 + RViz + Web Controller" $CYAN
+print_color "Max Speed: 5.0 m/s with advanced obstacle avoidance" $YELLOW
 
 # Check if ROS2 is sourced
 if [ -z "$ROS_DISTRO" ]; then
@@ -114,7 +126,7 @@ export PRIORITY_CLASS=high                   # High process priority
 export CPU_AFFINITY_MASK=0xFFF               # Use all CPU cores
 
 print_color "🚀 CPU Optimization: Using all $CPU_CORES cores" $GREEN
-print_color "⚡ Performance Mode: MAXIMUM" $YELLOW
+print_color "⚡ Performance Mode: MAXIMUM + NAVIGATION" $YELLOW
 
 print_color "🧹 Cleaning up any existing processes..." $YELLOW
 cleanup_all
@@ -126,6 +138,8 @@ NO_RVIZ=false
 NO_WEB=false
 HEADLESS=false
 WEB_PORT=8081
+USE_SAVED_MAP=false
+MAP_FILE=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -157,16 +171,22 @@ while [[ $# -gt 0 ]]; do
             WEB_PORT="$2"
             shift 2
             ;;
+        --map)
+            USE_SAVED_MAP=true
+            MAP_FILE="$2"
+            shift 2
+            ;;
         -h|--help)
             echo "Usage: $0 [OPTIONS]"
             echo "Options:"
             echo "  --simple           Use simple environment"
-            echo "  --kitchen          Use kitchen environment"
+            echo "  --kitchen          Use kitchen environment"  
             echo "  --complex-office   Use complex office environment (default)"
             echo "  --no-rviz          Don't start RViz"
             echo "  --no-web           Don't start web controller"
             echo "  --headless         Run MuJoCo in headless mode (better performance)"
             echo "  --port N           Web controller port (default: 8081)"
+            echo "  --map FILE         Use saved map for localization mode"
             echo "  -h, --help         Show this help"
             exit 0
             ;;
@@ -177,7 +197,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-print_header "🚀 STARTING SIMULATION COMPONENTS"
+print_header "🚀 STARTING NAVIGATION SYSTEM"
 
 # Step 1: Start MuJoCo SLAM Bridge with maximum priority
 print_color "🔧 Step 1: Starting MuJoCo simulation with SLAM bridge (MAX PRIORITY)..." $GREEN
@@ -187,7 +207,7 @@ else
     nice -n -20 taskset -c 0-$((CPU_CORES-1)) python3 stretch_slam_bridge_improved.py $ENVIRONMENT &
 fi
 SLAM_PID=$!
-sleep 6  # Reduced from 8 for faster startup
+sleep 6  # Wait for simulation to stabilize
 
 if ! kill -0 $SLAM_PID 2>/dev/null; then
     print_color "❌ Failed to start MuJoCo simulation" $RED
@@ -202,36 +222,105 @@ nice -n -15 taskset -c 0-$((CPU_CORES/2-1)) ros2 run robot_state_publisher robot
     --ros-args -p use_sim_time:=true \
     -p robot_description:="$(cat /tmp/stretch_slam.urdf 2>/dev/null || echo '<?xml version="1.0"?><robot name="stretch"><link name="base_link"><visual><geometry><box size="0.3 0.3 0.1"/></geometry></visual></link></robot>')" &
 RSP_PID=$!
-sleep 2  # Reduced from 3
+sleep 2
 
 print_color "✅ Robot state publisher started (PID: $RSP_PID)" $GREEN
 
-# Step 3: Start SLAM Toolbox with high priority
-print_color "🔧 Step 3: Starting SLAM Toolbox (HIGH PRIORITY)..." $GREEN
-nice -n -15 taskset -c $((CPU_CORES/2))-$((CPU_CORES-1)) ros2 run slam_toolbox async_slam_toolbox_node \
-    --ros-args -p use_sim_time:=true \
-    --params-file config/mapper_params_online_async.yaml &
-SLAM_TOOLBOX_PID=$!
-sleep 3  # Reduced from 4
-
-print_color "✅ SLAM Toolbox started (PID: $SLAM_TOOLBOX_PID)" $GREEN
-
-# Step 4: Start RViz (if not disabled) - Use Intel GPU for compatibility
-if [ "$NO_RVIZ" != "true" ]; then
-    print_color "🔧 Step 4: Starting RViz visualization (Intel GPU)..." $GREEN
-    # Temporarily disable NVIDIA PRIME for RViz to avoid compatibility issues
-    env -u __NV_PRIME_RENDER_OFFLOAD -u __GLX_VENDOR_LIBRARY_NAME \
-        rviz2 -d rviz/stretch_slam.rviz --ros-args -p use_sim_time:=true &
-    RVIZ_PID=$!
+# Step 3: Start SLAM Toolbox or Map Server based on mode
+if [ "$USE_SAVED_MAP" = "true" ]; then
+    print_color "🔧 Step 3: Starting Map Server with saved map: $MAP_FILE..." $GREEN
+    ros2 run nav2_map_server map_server --ros-args -p use_sim_time:=true -p yaml_filename:=$MAP_FILE &
+    MAP_SERVER_PID=$!
+    sleep 2
+    
+    # Start AMCL for localization
+    print_color "🔧 Step 3b: Starting AMCL for localization..." $GREEN
+    ros2 run nav2_amcl amcl --ros-args -p use_sim_time:=true &
+    AMCL_PID=$!
     sleep 3
-    print_color "✅ RViz started with Intel GPU (PID: $RVIZ_PID)" $GREEN
+    
+    print_color "✅ Map server and AMCL started" $GREEN
 else
-    print_color "⏭️  Step 4: RViz disabled" $YELLOW
+    print_color "🔧 Step 3: Starting SLAM Toolbox (FIXED)..." $GREEN
+    # Start SLAM Toolbox without problematic nice/taskset commands
+    ros2 run slam_toolbox async_slam_toolbox_node \
+        --ros-args -p use_sim_time:=true \
+        --params-file config/mapper_params_online_async.yaml \
+        --log-level WARN &
+    SLAM_TOOLBOX_PID=$!
+    sleep 8  # More time for SLAM to initialize properly
+    
+    print_color "✅ SLAM Toolbox started with queue optimization (PID: $SLAM_TOOLBOX_PID)" $GREEN
 fi
 
-# Step 5: Start Web Controller (if not disabled)
+# Step 4: Start Nav2 Lifecycle Manager
+print_color "🔧 Step 4: Starting Nav2 Lifecycle Manager..." $GREEN
+ros2 run nav2_lifecycle_manager lifecycle_manager --ros-args -p use_sim_time:=true \
+    -p autostart:=true \
+    -p node_names:="['controller_server', 'planner_server', 'behavior_server', 'bt_navigator', 'waypoint_follower', 'velocity_smoother', 'smoother_server']" &
+LIFECYCLE_PID=$!
+sleep 2
+
+print_color "✅ Lifecycle Manager started (PID: $LIFECYCLE_PID)" $GREEN
+
+# Step 5: Start Nav2 Core Components
+print_color "🔧 Step 5: Starting Nav2 core navigation components..." $GREEN
+
+# Controller Server (DWB Local Planner)
+ros2 run nav2_controller controller_server --ros-args -p use_sim_time:=true \
+    --params-file config/nav2_params.yaml &
+CONTROLLER_PID=$!
+
+# Planner Server (Global Path Planner) 
+ros2 run nav2_planner planner_server --ros-args -p use_sim_time:=true \
+    --params-file config/nav2_params.yaml &
+PLANNER_PID=$!
+
+# Behavior Server (Recovery Behaviors)
+ros2 run nav2_behaviors behavior_server --ros-args -p use_sim_time:=true \
+    --params-file config/nav2_params.yaml &
+BEHAVIOR_PID=$!
+
+# BT Navigator (Main Navigation Logic)
+ros2 run nav2_bt_navigator bt_navigator --ros-args -p use_sim_time:=true \
+    --params-file config/nav2_params.yaml &
+BT_NAVIGATOR_PID=$!
+
+# Waypoint Follower
+ros2 run nav2_waypoint_follower waypoint_follower --ros-args -p use_sim_time:=true \
+    --params-file config/nav2_params.yaml &
+WAYPOINT_PID=$!
+
+# Velocity Smoother for 5m/s operation
+ros2 run nav2_velocity_smoother velocity_smoother --ros-args -p use_sim_time:=true \
+    --params-file config/nav2_params.yaml &
+VELOCITY_SMOOTHER_PID=$!
+
+# Path Smoother for high-speed navigation
+ros2 run nav2_smoother smoother_server --ros-args -p use_sim_time:=true \
+    --params-file config/nav2_params.yaml &
+SMOOTHER_PID=$!
+
+sleep 5  # Give Nav2 components time to start
+
+print_color "✅ Nav2 navigation stack started" $GREEN
+
+# Step 6: Start RViz with Navigation Configuration (if not disabled)
+if [ "$NO_RVIZ" != "true" ]; then
+    print_color "🔧 Step 6: Starting RViz with Navigation visualization..." $GREEN
+    # Use Intel GPU for RViz compatibility
+    env -u __NV_PRIME_RENDER_OFFLOAD -u __GLX_VENDOR_LIBRARY_NAME \
+        rviz2 -d rviz/stretch_navigation.rviz --ros-args -p use_sim_time:=true &
+    RVIZ_PID=$!
+    sleep 3
+    print_color "✅ RViz navigation started (PID: $RVIZ_PID)" $GREEN
+else
+    print_color "⏭️  Step 6: RViz disabled" $YELLOW
+fi
+
+# Step 7: Start Web Controller (if not disabled)
 if [ "$NO_WEB" != "true" ]; then
-    print_color "🔧 Step 5: Starting web controller..." $GREEN
+    print_color "🔧 Step 7: Starting web controller..." $GREEN
     
     # Update port in web controller if different
     if [ "$WEB_PORT" != "8081" ]; then
@@ -245,7 +334,7 @@ if [ "$NO_WEB" != "true" ]; then
     
     python3 simple_web_controller.py &
     WEB_PID=$!
-    sleep 5  # Give more time for web controller to start
+    sleep 5
     
     if kill -0 $WEB_PID 2>/dev/null; then
         print_color "✅ Web controller started (PID: $WEB_PID)" $GREEN
@@ -254,53 +343,81 @@ if [ "$NO_WEB" != "true" ]; then
         WEB_PID=""
     fi
 else
-    print_color "⏭️  Step 5: Web controller disabled" $YELLOW
+    print_color "⏭️  Step 7: Web controller disabled" $YELLOW
 fi
 
-print_header "🎉 FULL SIMULATION READY!"
+print_header "🎉 AUTONOMOUS NAVIGATION SYSTEM READY!"
 
 print_color "" $NC
 print_color "📺 WINDOWS YOU SHOULD SEE:" $PURPLE
 print_color "  🏢 MuJoCo: 3D physics simulation with robot in office environment" $CYAN
-print_color "  📊 RViz: Robot model, laser scans, and real-time map building" $CYAN
+if [ "$USE_SAVED_MAP" = "true" ]; then
+    print_color "  📊 RViz: Robot model, costmaps, global/local plans, and localization" $CYAN
+else
+    print_color "  📊 RViz: Robot model, costmaps, global/local plans, and real-time mapping" $CYAN
+fi
 if [ "$NO_WEB" != "true" ]; then
     print_color "  🌐 Web Browser: http://localhost:$WEB_PORT (robot control interface)" $CYAN
 fi
 
 print_color "" $NC
-print_color "🎮 ROBOT CONTROL:" $PURPLE
+print_color "🎯 AUTONOMOUS NAVIGATION:" $PURPLE
+print_color "  • Use RViz '2D Nav Goal' tool to set navigation targets" $CYAN
+print_color "  • Robot will autonomously navigate avoiding obstacles" $CYAN
+print_color "  • Max speed: 5.0 m/s with advanced path planning" $CYAN
+print_color "  • Real-time obstacle avoidance with DWB local planner" $CYAN
+
+print_color "" $NC
+print_color "🎮 MANUAL CONTROL (if needed):" $PURPLE
 if [ "$NO_WEB" != "true" ]; then
-    print_color "  • Open http://localhost:$WEB_PORT in your web browser" $CYAN
-    print_color "  • Use the control buttons to move the robot" $CYAN
-    print_color "  • Adjust speed with the slider" $CYAN
+    print_color "  • Web interface: http://localhost:$WEB_PORT" $CYAN
 else
     print_color "  • Use: ros2 run teleop_twist_keyboard teleop_twist_keyboard" $CYAN
 fi
 
 print_color "" $NC
-print_color "📍 SLAM MAPPING:" $PURPLE
-print_color "  • Drive the robot around to explore the environment" $CYAN
-print_color "  • Watch the map being built in RViz in real-time" $CYAN
-print_color "  • Save map: ros2 run nav2_map_server map_saver_cli -f my_map" $CYAN
+print_color "📍 MAPPING & LOCALIZATION:" $PURPLE
+if [ "$USE_SAVED_MAP" = "true" ]; then
+    print_color "  • Using saved map: $MAP_FILE" $CYAN
+    print_color "  • AMCL provides localization in known environment" $CYAN
+else
+    print_color "  • Simultaneous mapping and navigation (SLAM)" $CYAN
+    print_color "  • Save map: ros2 run nav2_map_server map_saver_cli -f my_nav_map" $CYAN
+fi
+
+print_color "" $NC
+print_color "🧭 NAVIGATION COMMANDS:" $PURPLE
+print_color "  • Set goal in RViz: Click '2D Nav Goal' tool and click on map" $CYAN
+print_color "  • Terminal goal: ros2 action send_goal /navigate_to_pose ..." $CYAN
+print_color "  • Cancel goal: ros2 action send_goal /navigate_to_pose --cancel" $CYAN
 
 print_color "" $NC
 print_color "🔧 DEBUGGING:" $PURPLE
-print_color "  • Monitor topics: ros2 topic list" $CYAN
-print_color "  • Check laser: ros2 topic echo /scan" $CYAN
-print_color "  • Check odometry: ros2 topic echo /odom" $CYAN
+print_color "  • Monitor topics: ros2 topic list | grep nav" $CYAN
+print_color "  • Check costmaps: ros2 topic echo /local_costmap/costmap" $CYAN
+print_color "  • View plans: ros2 topic echo /plan" $CYAN
+print_color "  • Navigation status: ros2 topic echo /navigate_to_pose/_action/status" $CYAN
 
 print_color "" $NC
 print_color "🛑 TO STOP: Press Ctrl+C in this terminal" $RED
 print_color "" $NC
 
 # Monitor all processes and keep running
-print_color "⏳ Monitoring simulation... Press Ctrl+C to stop" $GREEN
+print_color "⏳ Monitoring navigation system... Press Ctrl+C to stop" $GREEN
 
 # Store all PIDs for monitoring
-PIDS="$SLAM_PID $RSP_PID $SLAM_TOOLBOX_PID"
+PIDS="$SLAM_PID $RSP_PID $LIFECYCLE_PID $CONTROLLER_PID $PLANNER_PID $BEHAVIOR_PID $BT_NAVIGATOR_PID $WAYPOINT_PID $VELOCITY_SMOOTHER_PID $SMOOTHER_PID"
+
+if [ "$USE_SAVED_MAP" = "true" ]; then
+    PIDS="$PIDS $MAP_SERVER_PID $AMCL_PID"
+else
+    PIDS="$PIDS $SLAM_TOOLBOX_PID"
+fi
+
 [ "$NO_RVIZ" != "true" ] && PIDS="$PIDS $RVIZ_PID"
 [ "$NO_WEB" != "true" ] && [ ! -z "$WEB_PID" ] && PIDS="$PIDS $WEB_PID"
 
+# System monitoring loop
 while true; do
     sleep 10
     
@@ -313,7 +430,12 @@ while true; do
     
     # Check if SLAM bridge (most critical) is still running
     if ! kill -0 $SLAM_PID 2>/dev/null; then
-        print_color "❌ MuJoCo simulation died - restarting simulation recommended" $RED
+        print_color "❌ MuJoCo simulation died - navigation system cannot continue" $RED
         break
+    fi
+    
+    # Check if BT Navigator is running (critical for navigation)
+    if ! kill -0 $BT_NAVIGATOR_PID 2>/dev/null; then
+        print_color "⚠️  BT Navigator died - autonomous navigation disabled" $YELLOW
     fi
 done

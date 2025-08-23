@@ -19,25 +19,25 @@ slam_toolbox:
     scan_topic: /scan
     mode: mapping # localization
     
-    # Debugging - Balanced high performance settings
+    # Debugging - Queue overflow prevention
     debug_logging: false
-    throttle_scans: 1                      # Process every scan
-    transform_publish_period: 0.1          # 10 Hz (balanced from 20 Hz)
-    map_update_interval: 3.0               # Update map every 3s (balanced)
+    throttle_scans: 2                      # Process every 2nd scan (reduce queue load)
+    transform_publish_period: 0.2          # 5 Hz (reduce processing)
+    map_update_interval: 4.0               # Update map every 4s (less frequent)
     resolution: 0.04                       # Balanced resolution  
     max_laser_range: 12.0                  # Match LiDAR range
-    minimum_time_interval: 0.2             # Balanced updates
-    transform_timeout: 0.15                # Balanced timeout
-    tf_buffer_duration: 30.0
-    stack_size_to_use: 80000000            # 80MB - Double the memory
+    minimum_time_interval: 0.3             # Longer intervals between updates
+    transform_timeout: 0.3                 # Longer timeout for stability
+    tf_buffer_duration: 15.0               # Smaller buffer
+    stack_size_to_use: 120000000           # 120MB - More memory for queue
     enable_interactive_mode: true
     
     # General Parameters - Balanced for performance and stability
     use_scan_matching: true
     use_scan_barycenter: true
-    minimum_travel_distance: 0.3          # Balanced frequency
-    minimum_travel_heading: 0.4           # Balanced frequency  
-    scan_buffer_size: 10                  # Much larger buffer to prevent overflow
+    minimum_travel_distance: 0.1          # Continuous mapping during navigation
+    minimum_travel_heading: 0.2           # Continuous mapping during navigation  
+    scan_buffer_size: 25                  # Much larger buffer to prevent queue overflow
     scan_buffer_maximum_scan_distance: 10.0
     link_match_minimum_response_fine: 0.1
     link_scan_maximum_distance: 1.5

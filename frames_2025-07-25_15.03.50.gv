@@ -1,0 +1,19 @@
+digraph G {
+"link_mast" -> "link_head"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"base_link" -> "link_mast"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"odom" -> "base_link"[label=" Broadcaster: default_authority\nAverage rate: 5.207\nBuffer length: 4.801\nMost recent transform: 1753445030.319099\nOldest transform: 1753445025.517626\n"];
+"base_link" -> "laser"[label=" Broadcaster: default_authority\nAverage rate: 5.207\nBuffer length: 4.801\nMost recent transform: 1753445030.319099\nOldest transform: 1753445025.517626\n"];
+"map" -> "odom"[label=" Broadcaster: default_authority\nAverage rate: 5.219\nBuffer length: 4.982\nMost recent transform: 1753445030.453307\nOldest transform: 1753445025.47171\n"];
+"base_link" -> "cam_d405_rgb_frame"[label=" Broadcaster: default_authority\nAverage rate: 5.207\nBuffer length: 4.801\nMost recent transform: 1753445030.319099\nOldest transform: 1753445025.517626\n"];
+"base_link" -> "cam_d435i_rgb_frame"[label=" Broadcaster: default_authority\nAverage rate: 5.207\nBuffer length: 4.801\nMost recent transform: 1753445030.319099\nOldest transform: 1753445025.517626\n"];
+"base_link" -> "cam_nav_rgb_frame"[label=" Broadcaster: default_authority\nAverage rate: 5.207\nBuffer length: 4.801\nMost recent transform: 1753445030.319099\nOldest transform: 1753445025.517626\n"];
+"link_lift" -> "link_arm_l0"[label=" Broadcaster: default_authority\nAverage rate: 10.259\nBuffer length: 4.874\nMost recent transform: 1753445030.39257\nOldest transform: 1753445025.518681\n"];
+"link_mast" -> "link_lift"[label=" Broadcaster: default_authority\nAverage rate: 10.259\nBuffer length: 4.874\nMost recent transform: 1753445030.39257\nOldest transform: 1753445025.518681\n"];
+"link_head" -> "link_head_pan"[label=" Broadcaster: default_authority\nAverage rate: 10.259\nBuffer length: 4.874\nMost recent transform: 1753445030.39257\nOldest transform: 1753445025.518681\n"];
+"link_head_pan" -> "link_head_tilt"[label=" Broadcaster: default_authority\nAverage rate: 10.259\nBuffer length: 4.874\nMost recent transform: 1753445030.39257\nOldest transform: 1753445025.518681\n"];
+"link_arm_l0" -> "link_gripper"[label=" Broadcaster: default_authority\nAverage rate: 10.259\nBuffer length: 4.874\nMost recent transform: 1753445030.39257\nOldest transform: 1753445025.518681\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1753445030.4711087"[ shape=plaintext ] ;
+}->"map";
+}

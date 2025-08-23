@@ -1,0 +1,12 @@
+digraph G {
+"odom" -> "base_link"[label=" Broadcaster: default_authority\nAverage rate: 5.193\nBuffer length: 4.814\nMost recent transform: 1755946722.18778\nOldest transform: 1755946717.373765\n"];
+"map" -> "odom"[label=" Broadcaster: default_authority\nAverage rate: 5.173\nBuffer length: 5.026\nMost recent transform: 1755946722.325986\nOldest transform: 1755946717.300246\n"];
+"base_link" -> "laser"[label=" Broadcaster: default_authority\nAverage rate: 5.193\nBuffer length: 4.814\nMost recent transform: 1755946722.18778\nOldest transform: 1755946717.373765\n"];
+"base_link" -> "cam_d405_rgb_frame"[label=" Broadcaster: default_authority\nAverage rate: 5.193\nBuffer length: 4.814\nMost recent transform: 1755946722.18778\nOldest transform: 1755946717.373765\n"];
+"base_link" -> "cam_d435i_rgb_frame"[label=" Broadcaster: default_authority\nAverage rate: 5.193\nBuffer length: 4.814\nMost recent transform: 1755946722.18778\nOldest transform: 1755946717.373765\n"];
+"base_link" -> "cam_nav_rgb_frame"[label=" Broadcaster: default_authority\nAverage rate: 5.193\nBuffer length: 4.814\nMost recent transform: 1755946722.18778\nOldest transform: 1755946717.373765\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1755946722.3260357"[ shape=plaintext ] ;
+}->"map";
+}

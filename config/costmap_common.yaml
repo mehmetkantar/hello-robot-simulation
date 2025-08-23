@@ -1,0 +1,31 @@
+# Common Costmap Parameters for Stretch Robot High-Speed Navigation
+
+footprint: "[[0.15, 0.15], [0.15, -0.15], [-0.15, -0.15], [-0.15, 0.15]]"
+footprint_padding: 0.05
+
+robot_radius: 0.15  # Stretch robot radius in meters
+inflation_radius: 0.55  # Larger safety margin for 5m/s navigation
+cost_scaling_factor: 3.0  # Higher cost scaling for safety at high speeds
+
+# Plugin configurations
+observation_sources: scan
+scan: {
+  sensor_frame: laser,
+  data_type: LaserScan,
+  topic: /scan,
+  marking: true,
+  clearing: true,
+  min_obstacle_height: 0.0,
+  max_obstacle_height: 2.0,
+  obstacle_range: 10.0,  # 10m obstacle detection
+  raytrace_range: 12.0,  # Full 12m lidar range for clearing
+  inf_is_valid: false
+}
+
+# Layer common parameters
+track_unknown_space: true
+use_maximum: false
+lethal_cost_threshold: 100
+unknown_cost_value: 255
+trinary_costmap: true
+transform_tolerance: 0.2  # Relaxed for high-speed operation
