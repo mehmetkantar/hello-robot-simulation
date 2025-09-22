@@ -13,8 +13,10 @@ import numpy as np
 import math
 from typing import Optional, Dict, Any
 
-# Add stretch_mujoco to path
-sys.path.append('/home/user/stretch_mujoco')
+# Add stretch_mujoco to path (use local directory)
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
 
 # GPU optimization setup
 import os
@@ -185,7 +187,7 @@ class StretchSLAMBridgeImproved(Node):
                 self.get_logger().info("Loading 25m×20m office building with multiple rooms, corridors, and obstacles")
                 
                 # Load the complex office scene with robot (based on the default scene.xml)
-                scene_xml_path = "/home/user/stretch_mujoco/stretch_mujoco/models/complex_office_scene.xml"
+                scene_xml_path = os.path.join(current_dir, "stretch_mujoco", "models", "complex_office_scene.xml")
                 self.get_logger().info(f"Loading scene from: {scene_xml_path}")
                 
                 try:
@@ -229,7 +231,7 @@ class StretchSLAMBridgeImproved(Node):
                 self.get_logger().info("Loading building with offices, labs, conference room, and equipment")
                 
                 # Load the demo complex scene
-                scene_xml_path = "/home/user/stretch_mujoco/stretch_mujoco/models/demo_complex_scene.xml"
+                scene_xml_path = os.path.join(current_dir, "stretch_mujoco", "models", "demo_complex_scene.xml")
                 self.sim = StretchMujocoSimulator(scene_xml_path=scene_xml_path, cameras_to_use=cameras_to_use)
                 self.sim.start(headless=headless)
                 self.is_running = True
@@ -257,7 +259,7 @@ class StretchSLAMBridgeImproved(Node):
                 self.get_logger().info("Loading office with furniture positioned away from center (0,0)")
                 
                 # Load the simple office scene with robot
-                scene_xml_path = "/home/user/stretch_mujoco/stretch_mujoco/models/simple_office_scene.xml"
+                scene_xml_path = os.path.join(current_dir, "stretch_mujoco", "models", "simple_office_scene.xml")
                 self.sim = StretchMujocoSimulator(scene_xml_path=scene_xml_path, cameras_to_use=cameras_to_use)
                 self.sim.start(headless=headless)
                 self.is_running = True
@@ -285,7 +287,7 @@ class StretchSLAMBridgeImproved(Node):
                 self.get_logger().info("Loading kitchen with cabinets, appliances, island, and dining area")
                 
                 # Load the kitchen scene with robot
-                scene_xml_path = "/home/user/stretch_mujoco/stretch_mujoco/models/kitchen_scene.xml"
+                scene_xml_path = os.path.join(current_dir, "stretch_mujoco", "models", "kitchen_scene.xml")
                 self.sim = StretchMujocoSimulator(scene_xml_path=scene_xml_path, cameras_to_use=cameras_to_use)
                 self.sim.start(headless=headless)
                 self.is_running = True

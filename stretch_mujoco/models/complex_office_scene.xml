@@ -1,0 +1,178 @@
+<mujoco model="stretch complex office scene">
+  <include file="stretch.xml"/>
+
+  <statistic center="0 0 .75" extent="15" meansize="0.05"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-120" elevation="-20"/>
+  </visual>
+
+  <asset>
+    <material name="floor" rgba=".8 .8 .9 1" reflectance="0.2"/>
+    <material name="wall" rgba=".9 .9 .8 1" reflectance="0.1"/>
+    <material name="office" rgba=".7 .8 .9 1" reflectance="0.1"/>
+    <material name="lab" rgba=".9 .7 .7 1" reflectance="0.1"/>
+    <material name="furniture" rgba=".5 .3 .2 1" reflectance="0.1"/>
+    <texture type="skybox" builtin="gradient" rgb1="0.44 0.80 1.00" rgb2="1 1 1" width="512" height="3072"/>
+  </asset>
+
+  <worldbody>
+    <!-- Lighting -->
+    <light pos="0 0 4" dir="0 0 -1" directional="true"/>
+    <light pos="5 5 3" dir="0 0 -1" diffuse="0.3 0.3 0.3"/>
+    <light pos="-5 -5 3" dir="0 0 -1" diffuse="0.3 0.3 0.3"/>
+    
+    <!-- Floor - Large office building floor -->
+    <geom name="floor" size="12.5 10 0.05" type="plane" material="floor"/>
+    
+    <!-- External Walls -->
+    <geom name="wall_north" type="box" size="12.5 0.1 1.5" pos="0 9.9 1.5" material="wall"/>
+    <geom name="wall_south" type="box" size="12.5 0.1 1.5" pos="0 -9.9 1.5" material="wall"/>
+    <geom name="wall_east" type="box" size="0.1 10 1.5" pos="12.4 0 1.5" material="wall"/>
+    <geom name="wall_west" type="box" size="0.1 10 1.5" pos="-12.4 0 1.5" material="wall"/>
+    
+    <!-- TASLAĞA UYGUN BASİT DÜZEN -->
+    <!-- Merkez uzun koridor duvarları - odalara geçiş boşluklarıyla -->
+    <!-- Doğu koridor duvarı -->
+    <geom name="corridor_east_n" type="box" size="0.1 1.5 1.5" pos="2.0 5.25 1.5" material="wall"/>
+    <!-- Oda 1'e geçiş boşluğu (1.5m) -->
+    <geom name="corridor_east_m1" type="box" size="0.1 1.5 1.5" pos="2.0 2.25 1.5" material="wall"/>
+    <!-- Oda 2'ye geçiş boşluğu (1.5m) -->
+    <geom name="corridor_east_m2" type="box" size="0.1 1.5 1.5" pos="2.0 -0.75 1.5" material="wall"/>
+    <!-- Oda 3'e geçiş boşluğu (1.5m) -->
+    <geom name="corridor_east_s" type="box" size="0.1 1.5 1.5" pos="2.0 -3.75 1.5" material="wall"/>
+    
+    <!-- Batı koridor duvarı -->
+    <geom name="corridor_west_n" type="box" size="0.1 1.5 1.5" pos="-2.0 5.25 1.5" material="wall"/>
+    <!-- Oda 4'e geçiş boşluğu (1.5m) -->
+    <geom name="corridor_west_m1" type="box" size="0.1 1.5 1.5" pos="-2.0 2.25 1.5" material="wall"/>
+    <!-- Oda 5'e geçiş boşluğu (1.5m) -->
+    <geom name="corridor_west_m2" type="box" size="0.1 1.5 1.5" pos="-2.0 -0.75 1.5" material="wall"/>
+    <!-- Oda 6'ya geçiş boşluğu (1.5m) -->
+    <geom name="corridor_west_s" type="box" size="0.1 1.5 1.5" pos="-2.0 -3.75 1.5" material="wall"/>
+    
+    <!-- SAĞDA 3 BASİT KARE ODA -->
+    <!-- Oda 1 (Kuzey) -->
+    <geom name="room1_north" type="box" size="5.0 0.1 1.5" pos="7.0 6.0 1.5" material="office"/>
+    <geom name="room1_south" type="box" size="5.0 0.1 1.5" pos="7.0 3.0 1.5" material="office"/>
+    <geom name="room1_east" type="box" size="0.1 1.5 1.5" pos="9.4 4.5 1.5" material="office"/>
+    <!-- Batı taraf koridor için açık -->
+    
+    <!-- Oda 2 (Orta) -->
+    <geom name="room2_north" type="box" size="5.0 0.1 1.5" pos="7.0 3.0 1.5" material="office"/>
+    <geom name="room2_south" type="box" size="5.0 0.1 1.5" pos="7.0 0.0 1.5" material="office"/>
+    <geom name="room2_east" type="box" size="0.1 1.5 1.5" pos="9.4 1.5 1.5" material="office"/>
+    <!-- Batı taraf koridor için açık -->
+    
+    <!-- Oda 3 (Güney) -->
+    <geom name="room3_north" type="box" size="5.0 0.1 1.5" pos="7.0 0.0 1.5" material="office"/>
+    <geom name="room3_south" type="box" size="5.0 0.1 1.5" pos="7.0 -3.0 1.5" material="office"/>
+    <geom name="room3_east" type="box" size="0.1 1.5 1.5" pos="9.4 -1.5 1.5" material="office"/>
+    <!-- Batı taraf koridor için açık -->
+    
+    <!-- SOLDA 3 BASİT KARE ODA -->
+    <!-- Oda 4 (Kuzey) -->
+    <geom name="room4_north" type="box" size="5.0 0.1 1.5" pos="-7.0 6.0 1.5" material="office"/>
+    <geom name="room4_south" type="box" size="5.0 0.1 1.5" pos="-7.0 3.0 1.5" material="office"/>
+    <geom name="room4_west" type="box" size="0.1 1.5 1.5" pos="-9.4 4.5 1.5" material="office"/>
+    <!-- Doğu taraf koridor için açık -->
+    
+    <!-- Oda 5 (Orta) -->
+    <geom name="room5_north" type="box" size="5.0 0.1 1.5" pos="-7.0 3.0 1.5" material="office"/>
+    <geom name="room5_south" type="box" size="5.0 0.1 1.5" pos="-7.0 0.0 1.5" material="office"/>
+    <geom name="room5_west" type="box" size="0.1 1.5 1.5" pos="-9.4 1.5 1.5" material="office"/>
+    <!-- Doğu taraf koridor için açık -->
+    
+    <!-- Oda 6 (Güney) -->
+    <geom name="room6_north" type="box" size="5.0 0.1 1.5" pos="-7.0 0.0 1.5" material="office"/>
+    <geom name="room6_south" type="box" size="5.0 0.1 1.5" pos="-7.0 -3.0 1.5" material="office"/>
+    <geom name="room6_west" type="box" size="0.1 1.5 1.5" pos="-9.4 -1.5 1.5" material="office"/>
+    <!-- Doğu taraf koridor için açık -->
+    
+    <!-- KORİDOR UÇ DUVARLAR -->
+    <!-- Kuzey koridor sonu -->
+    <geom name="corridor_north_end" type="box" size="4.0 0.1 1.5" pos="0 6.5 1.5" material="wall"/>
+    <!-- Güney koridor sonu -->
+    <geom name="corridor_south_end" type="box" size="4.0 0.1 1.5" pos="0 -3.5 1.5" material="wall"/>
+    
+    <!-- YAN ALAN - SADECE KONU ODALAR VAR -->
+    
+    <!-- Furniture and Obstacles -->
+    <!-- Office 1 furniture -->
+    <body name="desk1" pos="8 5 .4">
+      <geom type="box" size=".8 .4 .4" material="furniture"/>
+    </body>
+    <body name="chair1" pos="8 4.2 .25">
+      <geom type="cylinder" size=".3 .25" material="furniture"/>
+    </body>
+    
+    <!-- Office 2 furniture -->
+    <body name="desk2" pos="-8 5 .4">
+      <geom type="box" size=".8 .4 .4" material="furniture"/>
+    </body>
+    <body name="chair2" pos="-8 4.2 .25">
+      <geom type="cylinder" size=".3 .25" material="furniture"/>
+    </body>
+    
+    <!-- Office 3 furniture -->
+    <body name="desk3" pos="8 -5 .4">
+      <geom type="box" size=".8 .4 .4" material="furniture"/>
+    </body>
+    <body name="chair3" pos="8 -4.2 .25">
+      <geom type="cylinder" size=".3 .25" material="furniture"/>
+    </body>
+    
+    <!-- Office 4 furniture -->
+    <body name="desk4" pos="-8 -5 .4">
+      <geom type="box" size=".8 .4 .4" material="furniture"/>
+    </body>
+    <body name="chair4" pos="-8 -4.2 .25">
+      <geom type="cylinder" size=".3 .25" material="furniture"/>
+    </body>
+    
+    <!-- Conference room table -->
+    <body name="conf_table" pos="11 0 .4">
+      <geom type="box" size="1.2 .8 .4" material="furniture"/>
+    </body>
+    
+    <!-- Lab equipment -->
+    <body name="lab_bench1" pos="2 8.5 .45">
+      <geom type="box" size="1.5 .3 .45" material="furniture"/>
+    </body>
+    <body name="lab_bench2" pos="-2 8.5 .45">
+      <geom type="box" size="1.5 .3 .45" material="furniture"/>
+    </body>
+    <body name="lab_bench3" pos="2 -8.5 .45">
+      <geom type="box" size="1.5 .3 .45" material="furniture"/>
+    </body>
+    <body name="lab_bench4" pos="-2 -8.5 .45">
+      <geom type="box" size="1.5 .3 .45" material="furniture"/>
+    </body>
+    
+    <!-- Storage shelves -->
+    <body name="shelf1" pos="-11 0.8 .8">
+      <geom type="box" size=".2 .5 .8" material="furniture"/>
+    </body>
+    <body name="shelf2" pos="-11 -0.8 .8">
+      <geom type="box" size=".2 .5 .8" material="furniture"/>
+    </body>
+    
+    <!-- Corridor obstacles -->
+    <body name="water_cooler" pos="1.5 0 .6">
+      <geom type="cylinder" size=".2 .6" material="furniture"/>
+    </body>
+    <body name="plant1" pos="-1.5 0 .3">
+      <geom type="cylinder" size=".15 .3" rgba=".2 .8 .2 1"/>
+    </body>
+    
+    <!-- Fire extinguisher boxes -->
+    <body name="fire_ext1" pos="0 1.4 .8">
+      <geom type="box" size=".1 .1 .3" rgba="1 0 0 1"/>
+    </body>
+    <body name="fire_ext2" pos="0 -1.4 .8">
+      <geom type="box" size=".1 .1 .3" rgba="1 0 0 1"/>
+    </body>
+  </worldbody>
+</mujoco>

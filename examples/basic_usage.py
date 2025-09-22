@@ -11,7 +11,7 @@ import os
 import time
 
 # Add stretch_mujoco to path if needed
-sys.path.append('/home/user/stretch_mujoco')
+sys.path.append('./stretch_mujoco')
 
 try:
     from stretch_mujoco import StretchMujocoSimulator

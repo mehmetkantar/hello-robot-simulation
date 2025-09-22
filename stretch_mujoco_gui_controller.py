@@ -11,7 +11,7 @@ import threading
 import argparse
 
 # Add MuJoCo path
-sys.path.append('/home/user/stretch_mujoco')
+sys.path.append('./stretch_mujoco')
 
 try:
     from stretch_mujoco import StretchMujocoSimulator

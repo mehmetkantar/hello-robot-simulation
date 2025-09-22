@@ -14,7 +14,7 @@ import math
 from typing import Optional, Dict, Any
 
 # Add stretch_mujoco to path
-sys.path.append('/home/user/stretch_mujoco')
+sys.path.append('./stretch_mujoco')
 
 # ROS2 imports
 try:

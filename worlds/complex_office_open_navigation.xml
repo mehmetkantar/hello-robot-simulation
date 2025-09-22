@@ -1,5 +1,5 @@
 <mujoco model="stretch complex office - open navigation">
-  <include file="/home/user/stretch_mujoco/stretch_mujoco/models/stretch.xml"/>
+  <include file="./stretch_mujoco/stretch_mujoco/models/stretch.xml"/>
   
   <!-- Aggressive physics optimization for maximum speed -->
   <option timestep="0.01" gravity="0 0 -9.81" iterations="25" solver="PGS"/>

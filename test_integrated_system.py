@@ -15,7 +15,7 @@ import sys
 import os
 
 # Add MuJoCo path
-sys.path.append('/home/user/stretch_mujoco')
+sys.path.append('./stretch_mujoco')
 
 class SystemTester(Node):
     """Test the integrated system"""

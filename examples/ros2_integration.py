@@ -14,7 +14,7 @@ import threading
 import numpy as np
 
 # Add stretch_mujoco to path if needed
-sys.path.append('/home/user/stretch_mujoco')
+sys.path.append('./stretch_mujoco')
 
 # ROS2 imports (commented out as they may not be available)
 try:

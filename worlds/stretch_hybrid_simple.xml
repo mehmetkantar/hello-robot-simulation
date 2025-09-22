@@ -1,6 +1,6 @@
 <mujoco model="stretch_hybrid_simple">
   <!-- Hybrid model: Simplified cylindrical base + Original upper components -->
-  <compiler angle="radian" assetdir="/home/user/stretch_mujoco/stretch_mujoco/models/assets"/>
+  <compiler angle="radian" assetdir="./stretch_mujoco/stretch_mujoco/models/assets"/>
 
   <!-- Optimized physics settings for better performance -->
   <option timestep="0.015" gravity="0 0 -9.81" iterations="25" solver="PGS" integrator="implicitfast" impratio="15">

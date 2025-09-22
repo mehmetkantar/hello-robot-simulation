@@ -1,0 +1,153 @@
+<mujoco model="stretch demo complex scene">
+  <include file="stretch.xml"/>
+
+  <statistic center="0 0 .75" extent="15" meansize="0.05"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-120" elevation="-20"/>
+  </visual>
+
+  <asset>
+    <material name="floor" rgba=".8 .8 .9 1" reflectance="0.2"/>
+    <material name="wall" rgba=".9 .9 .8 1" reflectance="0.1"/>
+    <material name="office_wall" rgba=".85 .85 .9 1" reflectance="0.1"/>
+    <material name="lab_wall" rgba=".9 .8 .8 1" reflectance="0.1"/>
+    <material name="furniture" rgba=".5 .3 .2 1" reflectance="0.1"/>
+    <material name="desk" rgba=".6 .4 .3 1" reflectance="0.1"/>
+    <material name="equipment" rgba=".3 .3 .3 1" reflectance="0.2"/>
+    <texture type="skybox" builtin="gradient" rgb1="0.44 0.80 1.00" rgb2="1 1 1" width="512" height="3072"/>
+  </asset>
+
+  <worldbody>
+    <!-- Enhanced Lighting -->
+    <light pos="0 0 4" dir="0 0 -1" directional="true" diffuse="0.8 0.8 0.8"/>
+    <light pos="5 5 3" dir="0 0 -1" diffuse="0.4 0.4 0.4"/>
+    <light pos="-5 -5 3" dir="0 0 -1" diffuse="0.4 0.4 0.4"/>
+    <light pos="0 8 2.5" dir="0 -1 -0.5" diffuse="0.3 0.3 0.3"/>
+    
+    <!-- Large Building Floor -->
+    <geom name="floor" size="10 8 0.05" type="plane" material="floor"/>
+    
+    <!-- Outer Building Walls -->
+    <geom name="wall_north" type="box" size="10 0.15 1.5" pos="0 7.85 1.5" material="wall"/>
+    <geom name="wall_south" type="box" size="10 0.15 1.5" pos="0 -7.85 1.5" material="wall"/>
+    <geom name="wall_east" type="box" size="0.15 8 1.5" pos="9.85 0 1.5" material="wall"/>
+    <geom name="wall_west" type="box" size="0.15 8 1.5" pos="-9.85 0 1.5" material="wall"/>
+    
+    <!-- Central Corridor (Robot starts here - safe open space) -->
+    <!-- Corridor walls removed to allow free robot movement between all rooms -->
+    
+    <!-- Office Rooms -->
+    
+    <!-- Office and Lab Areas (walls removed for open floor plan) -->
+    <!-- Robot can now explore all areas freely -->
+    
+    <!-- Some partial walls kept for navigation structure -->
+    <!-- Office 1 partial wall -->
+    <geom name="office1_partial" type="box" size="0.1 1.5 1.5" pos="3 6.5 1.5" material="office_wall"/>
+    
+    <!-- Office 2 partial wall -->
+    <geom name="office2_partial" type="box" size="0.1 1.5 1.5" pos="-3 6.5 1.5" material="office_wall"/>
+    
+    <!-- Lab 1 partial wall -->
+    <geom name="lab1_partial" type="box" size="0.1 1.5 1.5" pos="3 -6.5 1.5" material="lab_wall"/>
+    
+    <!-- Lab 2 partial wall -->
+    <geom name="lab2_partial" type="box" size="0.1 1.5 1.5" pos="-3 -6.5 1.5" material="lab_wall"/>
+    
+    <!-- Conference Room (Far East) - More open -->
+    <geom name="conf_wall_w" type="box" size="0.1 2.5 1.5" pos="7 5.25 1.5" material="wall"/>
+    
+    <!-- Storage Room (Far West) - More open -->
+    <geom name="storage_wall_e" type="box" size="0.1 2.5 1.5" pos="-7 -5.25 1.5" material="wall"/>
+    
+    <!-- Furniture and Equipment -->
+    
+    <!-- Office 1 Furniture -->
+    <body name="desk1" pos="6 6 0.4">
+      <geom type="box" size="1.2 0.8 0.4" material="desk"/>
+    </body>
+    <body name="chair1" pos="4.5 6 0.25">
+      <geom type="cylinder" size="0.3 0.25" material="furniture"/>
+    </body>
+    <body name="bookshelf1" pos="9.6 5 1.0">
+      <geom type="box" size="0.2 2.0 1.0" material="furniture"/>
+    </body>
+    
+    <!-- Office 2 Furniture -->
+    <body name="desk2" pos="-6 6 0.4">
+      <geom type="box" size="1.2 0.8 0.4" material="desk"/>
+    </body>
+    <body name="chair2" pos="-4.5 6 0.25">
+      <geom type="cylinder" size="0.3 0.25" material="furniture"/>
+    </body>
+    <body name="filing_cabinet" pos="-9.6 6 0.6">
+      <geom type="box" size="0.3 0.6 0.6" material="furniture"/>
+    </body>
+    
+    <!-- Lab 1 Equipment -->
+    <body name="lab_bench1" pos="6 -5 0.45">
+      <geom type="box" size="1.5 0.6 0.45" material="equipment"/>
+    </body>
+    <body name="instrument1" pos="9.5 -5 0.8">
+      <geom type="box" size="0.4 0.4 0.3" material="equipment"/>
+    </body>
+    <body name="lab_stool1" pos="4.5 -4 0.3">
+      <geom type="cylinder" size="0.2 0.3" material="furniture"/>
+    </body>
+    
+    <!-- Lab 2 Equipment -->
+    <body name="lab_bench2" pos="-6 -5 0.45">
+      <geom type="box" size="1.5 0.6 0.45" material="equipment"/>
+    </body>
+    <body name="fume_hood" pos="-9.5 -6 1.2">
+      <geom type="box" size="0.3 1.0 1.2" material="equipment"/>
+    </body>
+    <body name="lab_stool2" pos="-4.5 -4 0.3">
+      <geom type="cylinder" size="0.2 0.3" material="furniture"/>
+    </body>
+    
+    <!-- Conference Room -->
+    <body name="conference_table" pos="8.5 4 0.4">
+      <geom type="box" size="1.8 1.0 0.4" material="desk"/>
+    </body>
+    <body name="conf_chair1" pos="7.5 4.8 0.25">
+      <geom type="cylinder" size="0.25 0.25" material="furniture"/>
+    </body>
+    <body name="conf_chair2" pos="7.5 3.2 0.25">
+      <geom type="cylinder" size="0.25 0.25" material="furniture"/>
+    </body>
+    <body name="conf_chair3" pos="9.5 4.8 0.25">
+      <geom type="cylinder" size="0.25 0.25" material="furniture"/>
+    </body>
+    <body name="conf_chair4" pos="9.5 3.2 0.25">
+      <geom type="cylinder" size="0.25 0.25" material="furniture"/>
+    </body>
+    
+    <!-- Storage Room -->
+    <body name="storage_rack1" pos="-8.5 -5 1.0">
+      <geom type="box" size="0.4 1.5 1.0" material="furniture"/>
+    </body>
+    <body name="storage_rack2" pos="-9.5 -3 1.0">
+      <geom type="box" size="0.3 1.0 1.0" material="furniture"/>
+    </body>
+    
+    <!-- Corridor Objects -->
+    <body name="water_cooler" pos="-8 0 0.6">
+      <geom type="cylinder" size="0.3 0.6" rgba="0.8 0.9 1.0 1"/>
+    </body>
+    <body name="plant1" pos="2 0.8 0.5">
+      <geom type="cylinder" size="0.2 0.5" rgba="0.2 0.8 0.2 1"/>
+    </body>
+    <body name="plant2" pos="-2 -0.8 0.5">
+      <geom type="cylinder" size="0.2 0.5" rgba="0.2 0.8 0.2 1"/>
+    </body>
+    
+    <!-- Robot safe starting area marker (center of corridor) -->
+    <body name="robot_start_area" pos="0 0 0.02">
+      <geom type="cylinder" size="0.8 0.01" rgba="0 1 0 0.3"/>
+    </body>
+  </worldbody>
+</mujoco>

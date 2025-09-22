@@ -6,7 +6,7 @@ Tests MuJoCo simulation directly
 
 import sys
 import time
-sys.path.append('/home/user/stretch_mujoco')
+sys.path.append('./stretch_mujoco')
 
 try:
     from stretch_mujoco import StretchMujocoSimulator

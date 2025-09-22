@@ -1,0 +1,197 @@
+<mujoco model="stretch kitchen scene">
+  <include file="stretch.xml"/>
+
+  <statistic center="0 0 .75" extent="8" meansize="0.05"/>
+  
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-120" elevation="-20"/>
+  </visual>
+
+  <asset>
+    <material name="floor" rgba=".85 .8 .75 1" reflectance="0.2"/>
+    <material name="wall" rgba=".95 .95 .9 1" reflectance="0.1"/>
+    <material name="cabinet" rgba=".4 .3 .2 1" reflectance="0.1"/>
+    <material name="counter" rgba=".8 .8 .8 1" reflectance="0.3"/>
+    <material name="appliance" rgba=".9 .9 .9 1" reflectance="0.2"/>
+    <material name="wood" rgba=".6 .4 .2 1" reflectance="0.1"/>
+    <texture type="skybox" builtin="gradient" rgb1="0.44 0.80 1.00" rgb2="1 1 1" width="512" height="3072"/>
+  </asset>
+
+  <worldbody>
+    <!-- Lighting -->
+    <light pos="0 0 3" dir="0 0 -1" directional="true" diffuse="0.8 0.8 0.8"/>
+    <light pos="2 2 2.5" dir="0 0 -1" diffuse="0.4 0.4 0.4"/>
+    <light pos="-2 -2 2.5" dir="0 0 -1" diffuse="0.4 0.4 0.4"/>
+    
+    <!-- Floor -->
+    <geom name="floor" size="4 3.5 0.05" type="plane" material="floor"/>
+    
+    <!-- Walls -->
+    <geom name="wall_north" type="box" size="4 0.1 1.5" pos="0 3.4 1.5" material="wall"/>
+    <geom name="wall_south" type="box" size="4 0.1 1.5" pos="0 -3.4 1.5" material="wall"/>
+    <geom name="wall_east" type="box" size="0.1 3.5 1.5" pos="3.9 0 1.5" material="wall"/>
+    <geom name="wall_west" type="box" size="0.1 3.5 1.5" pos="-3.9 0 1.5" material="wall"/>
+    
+    <!-- Kitchen Cabinets - Lower -->
+    <!-- North wall cabinets -->
+    <body name="cabinet_n1" pos="-2.5 3.2 0.45">
+      <geom type="box" size="1.2 0.3 0.45" material="cabinet"/>
+    </body>
+    <body name="cabinet_n2" pos="0 3.2 0.45">
+      <geom type="box" size="1.2 0.3 0.45" material="cabinet"/>
+    </body>
+    <body name="cabinet_n3" pos="2.5 3.2 0.45">
+      <geom type="box" size="1.2 0.3 0.45" material="cabinet"/>
+    </body>
+    
+    <!-- East wall cabinets -->
+    <body name="cabinet_e1" pos="3.7 1.5 0.45">
+      <geom type="box" size="0.3 1.2 0.45" material="cabinet"/>
+    </body>
+    <body name="cabinet_e2" pos="3.7 -1.5 0.45">
+      <geom type="box" size="0.3 1.2 0.45" material="cabinet"/>
+    </body>
+    
+    <!-- Kitchen Countertops -->
+    <!-- North counter -->
+    <body name="counter_n1" pos="-2.5 3.2 0.95">
+      <geom type="box" size="1.2 0.3 0.05" material="counter"/>
+    </body>
+    <body name="counter_n2" pos="0 3.2 0.95">
+      <geom type="box" size="1.2 0.3 0.05" material="counter"/>
+    </body>
+    <body name="counter_n3" pos="2.5 3.2 0.95">
+      <geom type="box" size="1.2 0.3 0.05" material="counter"/>
+    </body>
+    
+    <!-- East counter -->
+    <body name="counter_e1" pos="3.7 1.5 0.95">
+      <geom type="box" size="0.3 1.2 0.05" material="counter"/>
+    </body>
+    <body name="counter_e2" pos="3.7 -1.5 0.95">
+      <geom type="box" size="0.3 1.2 0.05" material="counter"/>
+    </body>
+    
+    <!-- Kitchen Island (Central) -->
+    <body name="island_base" pos="0 0 0.45">
+      <geom type="box" size="1.5 0.8 0.45" material="cabinet"/>
+    </body>
+    <body name="island_counter" pos="0 0 0.95">
+      <geom type="box" size="1.5 0.8 0.05" material="counter"/>
+    </body>
+    
+    <!-- Robot safe starting position marker -->
+    <body name="robot_start_position" pos="-2.5 -1.0 0.05">
+      <geom type="cylinder" size="0.1 0.01" rgba="0 1 0 0.3"/>
+    </body>
+    
+    <!-- Kitchen Appliances -->
+    <!-- Refrigerator -->
+    <body name="refrigerator" pos="-3.6 -2.5 1.0">
+      <geom type="box" size="0.3 0.6 1.0" material="appliance"/>
+    </body>
+    
+    <!-- Stove -->
+    <body name="stove" pos="0 3.1 1.0">
+      <geom type="box" size="0.4 0.2 0.1" material="appliance"/>
+    </body>
+    
+    <!-- Oven (under stove) -->
+    <body name="oven" pos="0 3.1 0.6">
+      <geom type="box" size="0.4 0.2 0.3" material="appliance"/>
+    </body>
+    
+    <!-- Microwave -->
+    <body name="microwave" pos="2.5 3.1 1.3">
+      <geom type="box" size="0.4 0.2 0.25" material="appliance"/>
+    </body>
+    
+    <!-- Dishwasher -->
+    <body name="dishwasher" pos="-2.5 3.1 0.6">
+      <geom type="box" size="0.4 0.2 0.3" material="appliance"/>
+    </body>
+    
+    <!-- Sink -->
+    <body name="sink" pos="3.6 1.5 1.0">
+      <geom type="box" size="0.2 0.4 0.15" rgba="0.8 0.8 0.9 1"/>
+    </body>
+    
+    <!-- Kitchen Table (moved away from robot starting position) -->
+    <body name="dining_table" pos="2.5 -2.5 0.4">
+      <geom type="box" size="0.8 1.2 0.4" material="wood"/>
+    </body>
+    
+    <!-- Objects on Dining Table -->
+    <!-- Glass of water -->
+    <body name="water_glass" pos="2.2 -2.2 0.85">
+      <geom type="cylinder" size="0.04 0.08" rgba="0.7 0.9 1.0 0.6"/>
+    </body>
+    
+    <!-- Plate with food -->
+    <body name="dinner_plate" pos="2.8 -2.3 0.82">
+      <geom type="cylinder" size="0.12 0.02" rgba="1.0 1.0 0.9 1"/>
+    </body>
+    
+    <!-- Book -->
+    <body name="book" pos="2.4 -2.9 0.83">
+      <geom type="box" size="0.08 0.12 0.03" rgba="0.2 0.4 0.8 1"/>
+    </body>
+    
+    <!-- Chairs around new table position -->
+    <body name="chair1" pos="1.8 -2.0 0.25">
+      <geom type="cylinder" size="0.2 0.25" material="wood"/>
+    </body>
+    <body name="chair2" pos="1.8 -3.0 0.25">
+      <geom type="cylinder" size="0.2 0.25" material="wood"/>
+    </body>
+    <body name="chair3" pos="3.2 -2.0 0.25">
+      <geom type="cylinder" size="0.2 0.25" material="wood"/>
+    </body>
+    <body name="chair4" pos="3.2 -3.0 0.25">
+      <geom type="cylinder" size="0.2 0.25" material="wood"/>
+    </body>
+    
+    <!-- Kitchen Items on Counter -->
+    <body name="coffee_maker" pos="-2.5 3.1 1.15">
+      <geom type="box" size="0.15 0.15 0.15" rgba="0.2 0.2 0.2 1"/>
+    </body>
+    
+    <body name="toaster" pos="2.5 3.1 1.05">
+      <geom type="box" size="0.2 0.1 0.1" rgba="0.9 0.9 0.9 1"/>
+    </body>
+    
+    <!-- Fruit bowl on island -->
+    <body name="fruit_bowl" pos="0 0 1.02">
+      <geom type="cylinder" size="0.15 0.07" rgba="0.8 0.6 0.4 1"/>
+    </body>
+    
+    <!-- Kitchen utensils holder -->
+    <body name="utensils_holder" pos="3.6 1.8 1.1">
+      <geom type="cylinder" size="0.08 0.15" rgba="0.9 0.9 0.9 1"/>
+    </body>
+    
+    <!-- Upper Cabinets -->
+    <body name="upper_cabinet_n1" pos="-2.5 3.1 1.8">
+      <geom type="box" size="1.2 0.2 0.4" material="cabinet"/>
+    </body>
+    <body name="upper_cabinet_n2" pos="0.8 3.1 1.8">
+      <geom type="box" size="0.8 0.2 0.4" material="cabinet"/>
+    </body>
+    <body name="upper_cabinet_n3" pos="2.5 3.1 1.8">
+      <geom type="box" size="1.2 0.2 0.4" material="cabinet"/>
+    </body>
+    
+    <!-- Kitchen Window (just a visual element) -->
+    <body name="window_frame" pos="3.85 0 1.5">
+      <geom type="box" size="0.05 1.0 0.8" rgba="0.6 0.4 0.2 1"/>
+    </body>
+  </worldbody>
+  
+  <!-- Safe starting positions for kitchen scene -->
+  <keyframe>
+    <key name="kitchen_start" qpos="-2.5 -1.0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" ctrl="0 0 0.6 0.1 0 0 0 0 0 0"/>
+  </keyframe>
+</mujoco>

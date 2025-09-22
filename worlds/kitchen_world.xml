@@ -10,7 +10,7 @@
   </default>
   
   <!-- Include Stretch robot -->
-  <include file="/home/user/stretch_mujoco/stretch_mujoco/models/stretch.xml"/>
+  <include file="./stretch_mujoco/stretch_mujoco/models/stretch.xml"/>
   
   <asset>
     <texture name="floor_tex" type="2d" builtin="checker" rgb1="0.8 0.8 0.8" rgb2="0.6 0.6 0.6" width="512" height="512"/>
