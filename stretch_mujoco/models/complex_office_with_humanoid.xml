@@ -1,0 +1,255 @@
+<mujoco model="stretch complex office with humanoid">
+  <include file="stretch.xml"/>
+
+  <!-- Use default stretch compiler settings (angle=radian) -->
+  <compiler inertiafromgeom="true"/>
+
+  <statistic center="0 0 .75" extent="15" meansize="0.05"/>
+
+  <!-- Default settings for humanoid -->
+  <default>
+    <default class="humanoid">
+      <joint armature="1" damping="1" limited="true"/>
+      <geom conaffinity="1" condim="1" contype="1" margin="0.001" material="humanoid_geom" rgba="0.8 0.6 .4 1"/>
+      <motor ctrllimited="true" ctrlrange="-.4 .4"/>
+    </default>
+  </default>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-120" elevation="-20"/>
+    <map fogend="5" fogstart="3"/>
+  </visual>
+
+  <asset>
+    <material name="floor" rgba=".8 .8 .9 1" reflectance="0.2"/>
+    <material name="wall" rgba=".9 .9 .8 1" reflectance="0.1"/>
+    <material name="office" rgba=".7 .8 .9 1" reflectance="0.1"/>
+    <material name="lab" rgba=".9 .7 .7 1" reflectance="0.1"/>
+    <material name="furniture" rgba=".5 .3 .2 1" reflectance="0.1"/>
+
+    <!-- Humanoid materials -->
+    <texture builtin="flat" height="1278" mark="cross" markrgb="1 1 1" name="humanoid_texgeom" random="0.01" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" type="cube" width="127"/>
+    <material name="humanoid_geom" texture="humanoid_texgeom" texuniform="true"/>
+
+    <texture type="skybox" builtin="gradient" rgb1="0.44 0.80 1.00" rgb2="1 1 1" width="512" height="3072"/>
+  </asset>
+
+  <worldbody>
+    <!-- Lighting -->
+    <light pos="0 0 4" dir="0 0 -1" directional="true"/>
+    <light pos="5 5 3" dir="0 0 -1" diffuse="0.3 0.3 0.3"/>
+    <light pos="-5 -5 3" dir="0 0 -1" diffuse="0.3 0.3 0.3"/>
+
+    <!-- Floor - Large office building floor -->
+    <geom name="floor" size="12.5 10 0.05" type="plane" material="floor"/>
+
+    <!-- External Walls -->
+    <geom name="wall_north" type="box" size="12.5 0.1 1.5" pos="0 9.9 1.5" material="wall"/>
+    <geom name="wall_south" type="box" size="12.5 0.1 1.5" pos="0 -9.9 1.5" material="wall"/>
+    <geom name="wall_east" type="box" size="0.1 10 1.5" pos="12.4 0 1.5" material="wall"/>
+    <geom name="wall_west" type="box" size="0.1 10 1.5" pos="-12.4 0 1.5" material="wall"/>
+
+    <!-- TASLAĞA UYGUN BASİT DÜZEN -->
+    <!-- Merkez uzun koridor duvarları - odalara geçiş boşluklarıyla -->
+    <!-- Doğu koridor duvarı -->
+    <geom name="corridor_east_n" type="box" size="0.1 1.5 1.5" pos="2.0 5.25 1.5" material="wall"/>
+    <!-- Oda 1'e geçiş boşluğu (1.5m) -->
+    <geom name="corridor_east_m1" type="box" size="0.1 1.5 1.5" pos="2.0 2.25 1.5" material="wall"/>
+    <!-- Oda 2'ye geçiş boşluğu (1.5m) -->
+    <geom name="corridor_east_m2" type="box" size="0.1 1.5 1.5" pos="2.0 -0.75 1.5" material="wall"/>
+    <!-- Oda 3'e geçiş boşluğu (1.5m) -->
+    <geom name="corridor_east_s" type="box" size="0.1 1.5 1.5" pos="2.0 -3.75 1.5" material="wall"/>
+
+    <!-- Batı koridor duvarı -->
+    <geom name="corridor_west_n" type="box" size="0.1 1.5 1.5" pos="-2.0 5.25 1.5" material="wall"/>
+    <!-- Oda 4'e geçiş boşluğu (1.5m) -->
+    <geom name="corridor_west_m1" type="box" size="0.1 1.5 1.5" pos="-2.0 2.25 1.5" material="wall"/>
+    <!-- Oda 5'e geçiş boşluğu (1.5m) -->
+    <geom name="corridor_west_m2" type="box" size="0.1 1.5 1.5" pos="-2.0 -0.75 1.5" material="wall"/>
+    <!-- Oda 6'ya geçiş boşluğu (1.5m) -->
+    <geom name="corridor_west_s" type="box" size="0.1 1.5 1.5" pos="-2.0 -3.75 1.5" material="wall"/>
+
+    <!-- Office Rooms -->
+    <!-- Office 1 (NE) -->
+    <geom name="office1_north" type="box" size="5.2 0.1 1.5" pos="7.1 8.4 1.5" material="office"/>
+    <geom name="office1_east" type="box" size="0.1 4.25 1.5" pos="12.3 6.25 1.5" material="office"/>
+    <geom name="office1_south" type="box" size="3.6 0.1 1.5" pos="8.9 3.5 1.5" material="office"/>
+
+    <!-- Office 2 (SE) -->
+    <geom name="office2_south" type="box" size="5.2 0.1 1.5" pos="7.1 -8.4 1.5" material="office"/>
+    <geom name="office2_east" type="box" size="0.1 4.25 1.5" pos="12.3 -6.25 1.5" material="office"/>
+    <geom name="office2_north" type="box" size="3.6 0.1 1.5" pos="8.9 -3.5 1.5" material="office"/>
+
+    <!-- Office 3 (NW) -->
+    <geom name="office3_north" type="box" size="5.2 0.1 1.5" pos="-7.1 8.4 1.5" material="office"/>
+    <geom name="office3_west" type="box" size="0.1 4.25 1.5" pos="-12.3 6.25 1.5" material="office"/>
+    <geom name="office3_south" type="box" size="3.6 0.1 1.5" pos="-8.9 3.5 1.5" material="office"/>
+
+    <!-- Office 4 (SW) -->
+    <geom name="office4_south" type="box" size="5.2 0.1 1.5" pos="-7.1 -8.4 1.5" material="office"/>
+    <geom name="office4_west" type="box" size="0.1 4.25 1.5" pos="-12.3 -6.25 1.5" material="office"/>
+    <geom name="office4_north" type="box" size="3.6 0.1 1.5" pos="-8.9 -3.5 1.5" material="office"/>
+
+    <!-- Lab Rooms -->
+    <!-- Lab 1 (North Center) -->
+    <geom name="lab1_north" type="box" size="8 0.1 1.5" pos="0 8.4 1.5" material="lab"/>
+    <geom name="lab1_south" type="box" size="2.5 0.1 1.5" pos="-4.75 6.75 1.5" material="lab"/>
+    <geom name="lab1_south2" type="box" size="2.5 0.1 1.5" pos="4.75 6.75 1.5" material="lab"/>
+
+    <!-- Lab 2 (South Center) -->
+    <geom name="lab2_south" type="box" size="8 0.1 1.5" pos="0 -8.4 1.5" material="lab"/>
+    <geom name="lab2_north" type="box" size="2.5 0.1 1.5" pos="-4.75 -6.75 1.5" material="lab"/>
+    <geom name="lab2_north2" type="box" size="2.5 0.1 1.5" pos="4.75 -6.75 1.5" material="lab"/>
+
+    <!-- Furniture and Equipment -->
+    <!-- Office Desks -->
+    <geom name="desk1" type="box" size="0.8 0.4 0.4" pos="8.0 5.0 0.4" material="furniture"/>
+    <geom name="desk2" type="box" size="0.8 0.4 0.4" pos="-8.0 5.0 0.4" material="furniture"/>
+    <geom name="desk3" type="box" size="0.8 0.4 0.4" pos="8.0 -5.0 0.4" material="furniture"/>
+    <geom name="desk4" type="box" size="0.8 0.4 0.4" pos="-8.0 -5.0 0.4" material="furniture"/>
+
+    <!-- Office Chairs -->
+    <geom name="chair1" type="cylinder" size="0.3 0.4" pos="8.0 4.2 0.2" material="furniture"/>
+    <geom name="chair2" type="cylinder" size="0.3 0.4" pos="-8.0 4.2 0.2" material="furniture"/>
+    <geom name="chair3" type="cylinder" size="0.3 0.4" pos="8.0 -4.2 0.2" material="furniture"/>
+    <geom name="chair4" type="cylinder" size="0.3 0.4" pos="-8.0 -4.2 0.2" material="furniture"/>
+
+    <!-- Lab Equipment -->
+    <geom name="lab_bench1" type="box" size="1.5 0.3 0.45" pos="2.0 8.0 0.45" material="furniture"/>
+    <geom name="lab_bench2" type="box" size="1.5 0.3 0.45" pos="-2.0 8.0 0.45" material="furniture"/>
+    <geom name="lab_bench3" type="box" size="1.5 0.3 0.45" pos="2.0 -8.0 0.45" material="furniture"/>
+    <geom name="lab_bench4" type="box" size="1.5 0.3 0.45" pos="-2.0 -8.0 0.45" material="furniture"/>
+
+    <!-- Conference room in center east -->
+    <geom name="conf_west" type="box" size="0.1 1.4 1.5" pos="9.9 0 1.5" material="wall"/>
+    <geom name="conf_north" type="box" size="1.25 0.1 1.5" pos="11.15 1.4 1.5" material="wall"/>
+    <geom name="conf_south" type="box" size="1.25 0.1 1.5" pos="11.15 -1.4 1.5" material="wall"/>
+    <geom name="conf_table" type="box" size="1.2 0.8 0.4" pos="11.0 0.0 0.4" material="furniture"/>
+
+    <!-- Storage room in center west -->
+    <geom name="storage_east" type="box" size="0.1 1.4 1.5" pos="-9.9 0 1.5" material="wall"/>
+    <geom name="storage_north" type="box" size="1.25 0.1 1.5" pos="-11.15 1.4 1.5" material="wall"/>
+    <geom name="storage_south" type="box" size="1.25 0.1 1.5" pos="-11.15 -1.4 1.5" material="wall"/>
+    <geom name="storage_shelf1" type="box" size="0.2 0.5 0.8" pos="-11.0 0.8 0.4" material="furniture"/>
+    <geom name="storage_shelf2" type="box" size="0.2 0.5 0.8" pos="-11.0 -0.8 0.4" material="furniture"/>
+
+    <!-- Corridor items -->
+    <geom name="water_cooler" type="cylinder" size="0.2 0.6" pos="1.5 0.0 0.3" material="furniture"/>
+    <geom name="plant" type="cylinder" size="0.15 0.4" pos="-1.5 0.0 0.2" material="furniture"/>
+
+    <!-- HUMANOID ROBOT ADDITION -->
+    <!-- Position humanoid on ground in the opposite corner from Stretch -->
+    <body name="humanoid_torso" pos="-8 -6 1.1" childclass="humanoid">
+      <camera name="humanoid_track" mode="trackcom" pos="0 -4 0" xyaxes="1 0 0 0 0 1"/>
+      <joint armature="0" damping="0" limited="false" name="humanoid_root" pos="0 0 0" stiffness="0" type="free"/>
+      <geom fromto="0 -.07 0 0 .07 0" name="humanoid_torso1" size="0.07" type="capsule"/>
+      <geom fromto="-.01 -.06 -.12 -.01 .06 -.12" name="humanoid_head" size="0.09" type="capsule"/>
+
+      <!-- Humanoid torso parts -->
+      <geom fromto="0 -.07 -.17 0 .07 -.17" name="humanoid_uwaist" size="0.06" type="capsule"/>
+      <geom fromto="-.01 -.06 -.21 -.01 .06 -.21" name="humanoid_lwaist" size="0.06" type="capsule"/>
+      <geom fromto="-.01 -.06 -.26 -.01 .06 -.26" name="humanoid_pelvis" size="0.09" type="capsule"/>
+
+      <!-- Right Hip and Leg -->
+      <body name="humanoid_right_thigh" pos="0 -0.1 -0.35">
+        <joint axis="0 0 1" name="humanoid_right_hip_z" pos="0 0 0" range="-0.524 0.524" type="hinge"/>
+        <joint axis="0 1 0" name="humanoid_right_hip_y" pos="0 0 0" range="-1.571 0.524" type="hinge"/>
+        <joint axis="1 0 0" name="humanoid_right_hip_x" pos="0 0 0" range="-0.524 0.524" type="hinge"/>
+        <geom fromto="0 0 0 0 0.01 -.34" name="humanoid_right_thigh1" size="0.06" type="capsule"/>
+
+        <body name="humanoid_right_shin" pos="0 0.01 -0.4">
+          <joint axis="0 1 0" name="humanoid_right_knee" pos="0 0 .02" range="-2.793 -0.035" type="hinge"/>
+          <geom fromto="0 0 0 0 0 -.3" name="humanoid_right_shin1" size="0.049" type="capsule"/>
+
+          <body name="humanoid_right_foot" pos="0 0 -0.35">
+            <joint axis="0 1 0" name="humanoid_right_ankle_y" pos="0 0 0.08" range="-0.873 0.873" type="hinge"/>
+            <joint axis="1 0 0" name="humanoid_right_ankle_x" pos="0 0 0.08" range="-0.873 0.873" type="hinge"/>
+            <geom fromto="-.07 -0.02 0 .14 -0.02 0" name="humanoid_right_foot_cap1" size="0.027" type="capsule"/>
+            <geom fromto="-.07 0 0 .14 0 0" name="humanoid_right_foot_cap2" size="0.027" type="capsule"/>
+          </body>
+        </body>
+      </body>
+
+      <!-- Left Hip and Leg -->
+      <body name="humanoid_left_thigh" pos="0 0.1 -0.35">
+        <joint axis="0 0 1" name="humanoid_left_hip_z" pos="0 0 0" range="-0.524 0.524" type="hinge"/>
+        <joint axis="0 1 0" name="humanoid_left_hip_y" pos="0 0 0" range="-1.571 0.524" type="hinge"/>
+        <joint axis="1 0 0" name="humanoid_left_hip_x" pos="0 0 0" range="-0.524 0.524" type="hinge"/>
+        <geom fromto="0 0 0 0 -0.01 -.34" name="humanoid_left_thigh1" size="0.06" type="capsule"/>
+
+        <body name="humanoid_left_shin" pos="0 -0.01 -0.4">
+          <joint axis="0 1 0" name="humanoid_left_knee" pos="0 0 .02" range="-2.793 -0.035" type="hinge"/>
+          <geom fromto="0 0 0 0 0 -.3" name="humanoid_left_shin1" size="0.049" type="capsule"/>
+
+          <body name="humanoid_left_foot" pos="0 0 -0.35">
+            <joint axis="0 1 0" name="humanoid_left_ankle_y" pos="0 0 0.08" range="-0.873 0.873" type="hinge"/>
+            <joint axis="1 0 0" name="humanoid_left_ankle_x" pos="0 0 0.08" range="-0.873 0.873" type="hinge"/>
+            <geom fromto="-.07 0.02 0 .14 0.02 0" name="humanoid_left_foot_cap1" size="0.027" type="capsule"/>
+            <geom fromto="-.07 0 0 .14 0 0" name="humanoid_left_foot_cap2" size="0.027" type="capsule"/>
+          </body>
+        </body>
+      </body>
+
+      <!-- Right Shoulder and Arm -->
+      <body name="humanoid_right_upper_arm" pos="0 -0.17 0.06">
+        <joint axis="1 0 0" name="humanoid_right_shoulder1" pos="0 0 0" range="-1.484 1.047" type="hinge"/>
+        <joint axis="0 1 0" name="humanoid_right_shoulder2" pos="0 0 0" range="-1.484 1.484" type="hinge"/>
+        <geom fromto="0 0 0 .16 -.16 -.16" name="humanoid_right_uarm1" size="0.04" type="capsule"/>
+
+        <body name="humanoid_right_lower_arm" pos="0.18 -0.18 -0.18">
+          <joint axis="0 1 0" name="humanoid_right_elbow" pos="0 0 0" range="-1.571 0.873" type="hinge"/>
+          <geom fromto="0.01 0.01 0.01 .17 .17 .17" name="humanoid_right_larm" size="0.031" type="capsule"/>
+
+          <body name="humanoid_right_hand" pos="0.18 0.18 0.18">
+            <geom name="humanoid_right_hand_geom" pos="0 0 0" size="0.04" type="sphere"/>
+          </body>
+        </body>
+      </body>
+
+      <!-- Left Shoulder and Arm -->
+      <body name="humanoid_left_upper_arm" pos="0 0.17 0.06">
+        <joint axis="1 0 0" name="humanoid_left_shoulder1" pos="0 0 0" range="-1.047 1.484" type="hinge"/>
+        <joint axis="0 1 0" name="humanoid_left_shoulder2" pos="0 0 0" range="-1.484 1.484" type="hinge"/>
+        <geom fromto="0 0 0 .16 .16 -.16" name="humanoid_left_uarm1" size="0.04" type="capsule"/>
+
+        <body name="humanoid_left_lower_arm" pos="0.18 0.18 -0.18">
+          <joint axis="0 1 0" name="humanoid_left_elbow" pos="0 0 0" range="-1.571 0.873" type="hinge"/>
+          <geom fromto="0.01 -0.01 0.01 .17 -.17 .17" name="humanoid_left_larm" size="0.031" type="capsule"/>
+
+          <body name="humanoid_left_hand" pos="0.18 -0.18 0.18">
+            <geom name="humanoid_left_hand_geom" pos="0 0 0" size="0.04" type="sphere"/>
+          </body>
+        </body>
+      </body>
+    </body>
+
+  </worldbody>
+
+  <!-- Actuators for humanoid -->
+  <actuator>
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_right_hip_z" gear="100"/>
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_right_hip_y" gear="100"/>
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_right_hip_x" gear="100"/>
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_right_knee" gear="150"/>
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_right_ankle_y" gear="90"/>
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_right_ankle_x" gear="90"/>
+
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_left_hip_z" gear="100"/>
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_left_hip_y" gear="100"/>
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_left_hip_x" gear="100"/>
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_left_knee" gear="150"/>
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_left_ankle_y" gear="90"/>
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_left_ankle_x" gear="90"/>
+
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_right_shoulder1" gear="75"/>
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_right_shoulder2" gear="75"/>
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_right_elbow" gear="75"/>
+
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_left_shoulder1" gear="75"/>
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_left_shoulder2" gear="75"/>
+    <motor ctrllimited="true" ctrlrange="-0.4 0.4" joint="humanoid_left_elbow" gear="75"/>
+  </actuator>
+
+</mujoco>
