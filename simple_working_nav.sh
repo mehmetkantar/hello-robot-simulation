@@ -19,6 +19,7 @@ cleanup() {
     pkill -f slam_toolbox 2>/dev/null || true
     pkill -f nav2 2>/dev/null || true
     pkill -f rviz2 2>/dev/null || true
+    pkill -f simple_web_controller 2>/dev/null || true
     sleep 2
 }
 
@@ -52,6 +53,10 @@ print_color "4. Starting RViz..." $GREEN
 rviz2 -d rviz/stretch_navigation.rviz --ros-args -p use_sim_time:=true &
 sleep 5
 
+print_color "5. Starting Web Controller..." $GREEN
+python3 simple_web_controller.py &
+sleep 3
+
 print_color "✅ TESTING SYSTEM..." $GREEN
 
 # Test navigation action
@@ -65,6 +70,8 @@ print_color "Navigate Servers: $ACTION_SERVERS" $YELLOW
 if [ "$ACTION_SERVERS" = "1" ] && [ "$MAP_PUBLISHERS" = "1" ]; then
     print_color "🎉 SUCCESS! Use RViz 2D Goal Pose tool to navigate!" $GREEN
     print_color "Click the goal tool and click on white areas of the map" $GREEN
+    print_color "🌐 Web Controller: http://localhost:8081" $GREEN
+    print_color "📱 Use web browser for robot control!" $GREEN
 else
     print_color "⚠️  System still starting, wait 30 more seconds..." $YELLOW
 fi
